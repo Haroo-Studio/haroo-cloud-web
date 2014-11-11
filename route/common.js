@@ -89,13 +89,6 @@ function getToday() {
     return new Date().toISOString().slice(0, 10);
 }
 
-function getHarooID(email) {
-    var namespace = createUUIDv5('null', 'db1.haroopress.com', true); // Buffer form is more efficient
-    var uuid = createUUIDv5(namespace, email);
-
-    return 'b' + uuid.replace(/-/g,'');
-}
-
 function getAccessToken() {
 //    return uuid.v1();
     return uuid.v4();
@@ -158,7 +151,6 @@ function sendPasswordResetMail(address, context) {
 
 module.exports = {
     getToday: getToday,
-    getHarooID: getHarooID,
     getAccessToken: getAccessToken,
     getLoginExpireDate: getExpireDate,
     saveAccountAccessLog: saveAccountAccessLog,

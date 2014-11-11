@@ -145,7 +145,7 @@ exports.signUp = function (req, res, next) {
 
             return res.redirect('back');
         } else {
-            user.haroo_id = common.getHarooID(req.param('email'));
+            user.haroo_id = AccountInit.initHarooID(req.param('email'));
             user.login_expire = common.getLoginExpireDate();
 
             AccountInit.initAccount(user.haroo_id);
