@@ -113,6 +113,15 @@ app.use(function(req, res, callback) {
     };
     callback();
 });
+
+// for nginx proxy
+if (app.get('hostEnv') != 'development') {
+    app.enable('trust proxy');  // using Express behind nginx
+    app.use(logger('combined'));
+} else {
+    app.use(logger('dev'));
+}
+
 app.use(function(req, res, callback) {
     // Remember original destination before login.
     var path = req.path.split('/')[1];

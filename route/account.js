@@ -297,7 +297,7 @@ exports.resetPassword = function (req, res) {
         existAccount.reset_password_token = randomToken;
         existAccount.reset_password_token_expire = common.getPasswordResetExpire();
         existAccount.save();
-        var host = req.protocol + '://' + req.host;
+        var host = req.protocol + '://' + req.hostname;
 
         common.sendPasswordResetMail(existAccount.email, { link: host + '/account/update-password/' + randomToken });
 
