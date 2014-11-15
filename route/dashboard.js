@@ -3,6 +3,8 @@ var async = require('async');
 
 var nano = require('nano')('http://' + database.couch.host);
 
+// todo: couch db access module will be moved to core-api module
+
 function getPageParams (totalCount, nowPage, pageSize, pageGutter) {
     var params = {};
 
@@ -17,6 +19,11 @@ function getPageParams (totalCount, nowPage, pageSize, pageGutter) {
 }
 
 exports.index = function (req, res) {
+    /*
+         "all": {
+            "map": "function (doc) {\n          if (doc.type && !doc.trash) {\n            emit([ Date.parse(doc.updated_at) ], doc)\n          }\n        }"
+         }
+    */
     var params = {
         user_id: req.user.uid,
         list: [],
@@ -24,11 +31,11 @@ exports.index = function (req, res) {
         pageSize: 20,
         pageGutter: 10
     };
-    var couch = nano.db.use('db1');
+    var couch = nano.db.use(req.user.haroo_id);
 
     async.parallel([
             function (callback) {
-                couch.view('dashboard', 'recent_list', function (err, result) {
+                couch.view('docs', 'all', function (err, result) {
                     if (!err) {
                         callback(null, result.rows);
                     } else {
@@ -37,9 +44,10 @@ exports.index = function (req, res) {
                 });
             },
             function (callback) {
-                couch.view('dashboard', 'tag_count', function (err, result) {
+                couch.view('tags', 'all', function (err, result) {
+                    console.log(result);
                     if (!err) {
-                        callback(null, result.rows[0]);
+                        callback(null, result.rows);
                     } else {
                         callback(err);
                     }
@@ -47,9 +55,10 @@ exports.index = function (req, res) {
             }],
         function (err, results) {
             params.list = results[0];
+            console.log(params.list);
             params.page_param = getPageParams(Number(results[0].length), Number(params.page), Number(params.pageSize), Number(params.pageGutter));
 
-            params.tagCount = results[1].value;
+            params.tagCount = results[1].length;
 
             res.render('dashboard', params);
         });
@@ -64,11 +73,11 @@ exports.list = function (req, res) {
         pageSize: 20,
         pageGutter: 10
     };
+    var couch = nano.db.use(req.user.haroo_id);
 
-    var couch = nano.db.use('db1');
-    var listType = (params.type || 'total') + '_list';
+    var listType = (params.type || 'all');
 
-    couch.view('dashboard', listType, function (err, result) {
+    couch.view('docs', listType, function (err, result) {
         if (!err) {
 //            result.rows.forEach(function (doc) {
 //                console.log(doc.key, doc.value);
@@ -89,15 +98,14 @@ exports.documentView = function (req, res) {
         user_id: req.user.uid,
         view_id: req.param('view_id')
     };
-
-    var couch = nano.db.use('db1');
+    var couch = nano.db.use(req.user.haroo_id);
 
     couch.get(params.view_id, function (err, doc) {
         params.doc = doc;
         if (!err) {
             res.render('document_view', params);
         } else {
-            res.status(500).send('Something broke!');
+            res.status(500).send('Something broken!');
         }
     });
 };
@@ -108,10 +116,9 @@ exports.documentUpdate = function (req, res) {
         view_id: req.param('view_id'),
         publicUrl: req.param('publicUrl') || ''
     };
+    var couch = nano.db.use(req.user.haroo_id);
 
     if (!params.view_id) return res.send({ ok: false });
-
-    var couch = nano.db.use('db1');
 
     couch.get(params.view_id, function (err, doc) {
         if (err) {
@@ -138,18 +145,24 @@ exports.documentUpdate = function (req, res) {
 };
 
 exports.documentPublicView = function (req, res) {
+    /*
+        "public": {
+            "map": "function (doc) {\n          if (doc.meta) {\n            emit(doc.meta.share, doc)\n          }\n        }"
+        }
+    */
     var params = {
-        view_id: req.param('view_id')
+        haroo_id: req.param('haroo_id'),    // todo: replace some id by user defined
+        public_key: req.param('public_key')
     };
+    var couch = nano.db.use(params.haroo_id);
 
-    var couch = nano.db.use('db1');
-
-    couch.get(params.view_id, function (err, doc) {
-        params.doc = doc;
-        if (!err) {
+    couch.view('search','public', { keys: [params.public_key] }, function (err, result) {
+        console.log(result);
+        params.list = result.rows;
+        if (!err && params.list.length) {
             res.render('document_public_view', params);
         } else {
-            res.status(500).send('Something broke!');
+            res.status(500).send('NOTHING TO SHOW, PLEASE USE CORRECT PUBLIC URL');
         }
     });
 };

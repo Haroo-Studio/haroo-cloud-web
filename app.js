@@ -148,10 +148,25 @@ app.get('/', function (req, res) {
         res.render('index', params);
     }
 */
-
     res.render('index', params);
-
 });
+
+app.get('/studio', function (req, res) {
+    var params = {};
+
+    res.render('studio/index', params);
+});
+app.get('/haroonote', function (req, res) {
+    var params = {};
+
+    res.render('haroonote/index', params);
+});
+app.get('/harookit', function (req, res) {
+    var params = {};
+
+    res.render('harookit/index', params);
+});
+
 app.get('/download', useragent.express(), function (req, res) {
     var params = {
         isDesktop: req.useragent.isDesktop,
@@ -198,38 +213,10 @@ app.get('/logout', accountController.logout);
 app.get('/signup', accountController.signUpForm);
 app.post('/signup', accountController.signUp);
 
-app.get('/account', accountController.isAuthenticated, accountController.accountInfo);
-app.post('/account/profile', accountController.isAuthenticated, accountController.updateProfile);
-app.post('/account/password', accountController.isAuthenticated, accountController.updatePassword);
-app.post('/account/delete', accountController.isAuthenticated, accountController.deleteAccount);
-app.get('/account/unlink/:provider', accountController.isAuthenticated, accountController.unlinkAccount);
-
 app.get('/account/reset-password', accountController.resetPasswordForm);
 app.post('/account/reset-password', accountController.resetPassword);
 app.get('/account/update-password/:token?', accountController.updatePasswordForm);
 app.post('/account/update-password/:token?', accountController.updatePasswordForReset);
-
-// pages
-app.get('/studio', function (req, res) {
-    var params = {};
-
-    res.render('studio/index', params);
-});
-app.get('/haroonote', function (req, res) {
-    var params = {};
-
-    res.render('haroonote/index', params);
-});
-app.get('/harookit', function (req, res) {
-    var params = {};
-
-    res.render('harookit/index', params);
-});
-
-app.get('/auth/token', function (req, res) {
-    //check token expired?
-    return res.end();
-});
 
 app.get('/auth/twitter', passport.authenticate('twitter'));
 app.get('/auth/twitter/callback', accountController.linkExternalAccount);
@@ -240,25 +227,21 @@ app.get('/auth/facebook/callback', accountController.linkExternalAccount);
 app.get('/auth/google', passport.authenticate('google', { scope: 'profile email' }));
 app.get('/auth/google/callback', accountController.linkExternalAccount);
 
-// dashboard and user custom urls should below above all routes
-app.get('/dashboard', accountController.isAuthenticated, dashboardController.index);
-app.get('/dashboard/list', accountController.isAuthenticated, dashboardController.list);
-app.get('/dashboard/:view_id', accountController.isAuthenticated, dashboardController.documentView);
-app.post('/dashboard/:view_id/update', accountController.isAuthenticated, dashboardController.documentUpdate);
-app.get('/p/:view_id', accountController.isAuthenticated, dashboardController.documentPublicView);
-// todo: public address
-app.get('/p/:user_id/:publicUrl', function (req, res) {
-    var params = {
-        userID: req.param('user_id'),
-        publicUrl: req.param('publicUrl')
-    };
+app.get('/p/:haroo_id/:public_key', dashboardController.documentPublicView);
 
-    // check that doc is public?
-    // retrieve meta.share value from publicUrl
+// restrict session
+app.use(accountController.isAuthenticated);
 
-    console.log(params);
-    res.send(params);
-});
+app.get('/account', accountController.accountInfo);
+app.post('/account/profile', accountController.updateProfile);
+app.post('/account/password', accountController.updatePassword);
+app.post('/account/delete', accountController.deleteAccount);
+app.get('/account/unlink/:provider', accountController.unlinkAccount);
+
+app.get('/dashboard',  dashboardController.index);
+app.get('/dashboard/list', dashboardController.list);
+app.get('/dashboard/:view_id', dashboardController.documentView);
+app.post('/dashboard/:view_id/update', dashboardController.documentUpdate);
 
 // 500 Error Handler
 app.use(errorHandler());

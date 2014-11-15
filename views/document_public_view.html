@@ -12,25 +12,11 @@
     <title>{{ site.title }}</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="/components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]>
-    <script src="http://getbootstrap.com/assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <script src="http://getbootstrap.com/assets/js/ie-emulation-modes-warning.js"></script>
-
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="http://getbootstrap.com/assets/js/ie10-viewport-bug-workaround.js"></script>
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
+    <link rel="stylesheet" href="/components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/components/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/dashboard/dashboard.css">
     <link rel="stylesheet" href="/css/haroo-cloud-common.css">
-    <link rel="stylesheet" type="text/css" href="/css/font-awesome.css">
-    <link rel="stylesheet" type="text/css" href="/css/dashboard/dashboard.css">
+    <link rel="stylesheet" href="/css/haroo-cloud-patch.css">
 </head>
 <body>
 
@@ -38,6 +24,7 @@
     <div class="page-content">
         <!-- Main Content -->
 
+        {% for doc in list %}
         <div class="row">
             <div class="col-lg-12">
                 <div class="widget">
@@ -46,11 +33,11 @@
                             <i class="fa fa-sitemap"></i>
                         </div>
                         <div class="widget-content pull-left">
-                            <div class="title" title="Tags">{{ doc.tags.length }}</div>
+                            <div class="title" title="Tags">{{ doc.value.tags.length }}</div>
                             <div class="comment">Tags</div>
                         </div>
                         <div style="padding-left: 8em;">
-                            {{ doc.toc.html | safe }}
+                            {{ doc.value.toc.html | safe }}
                         </div>
                         <div class="clearfix"></div>
                     </div>
@@ -60,17 +47,19 @@
             <div class="col-lg-12">
                 <div class="widget">
                     <div class="widget-title">
-                        <i class="fa fa-tasks"></i> {{ doc.title }}
-                        <span class="pull-right hidden">{{ doc.updated_at|default('doc.created_at')|date('Y-m-d') }}</span>
+                        <a href="{{ site.url }}/p/{{ haroo_id }}/{{ doc.value.meta.share }}" target="_blank" style="margin-right: 0.5em;"><i class="fa fa-cloud"></i>{{ doc.value.title }}</a>
+                        <span class="pull-right">{{ doc.value.updated_at|default('doc.value.created_at')|date('Y-m-d') }}</span>
+                        <span class="pull-right" style="margin-right: 0.5em;"><small><i class="fa fa-key"></i>{{ doc.id }}</small></span>
                     </div>
                     <div class="widget-body">
                         <div class="">
-                            {{ doc.html | safe }}
+                            {{ doc.value.html | safe }}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        {% endfor %}
     </div>
 </div>
 

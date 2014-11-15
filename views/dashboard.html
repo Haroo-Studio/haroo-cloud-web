@@ -121,8 +121,8 @@
                                     {% for item in list %}
                                     <tr>
                                         <td style="width: 5em;">{{ page_param.lineCounter - loop.index0 }}</td>
-                                        <td><a href="/dashboard/{{ item.key | safe }}">{{ item.value[0] }}</a></td>
-                                        <td style="width: 8em;">{{ item.value[1]|date('Y-m-d') }}</td>
+                                        <td><a href="/dashboard/{{ item.id | safe }}">{{ item.value['title'] }}</a></td>
+                                        <td style="width: 8em;">{{ item.value['created_at']|date('Y-m-d') }}</td>
                                     </tr>
                                     {% endfor %}
                                     </tbody>
