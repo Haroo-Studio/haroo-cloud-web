@@ -2,7 +2,7 @@ var database = require('../config/database');
 var async = require('async');
 
 var nano = require('nano')('http://' + database.couch.host);
-
+var publicDoc = require('../model/publicDocument');
 // todo: couch db access module will be moved to core-api module
 
 function getPageParams (totalCount, nowPage, pageSize, pageGutter) {
@@ -16,6 +16,18 @@ function getPageParams (totalCount, nowPage, pageSize, pageGutter) {
     params.endPage = params.totalPages > pageGutter * 2 && nowPage + pageGutter < params.totalPages ? nowPage + pageGutter + (pageGutter - nowPage > 0 ? pageGutter - nowPage : 0) : params.totalPages;
 
     return params;
+}
+
+function makeZeroFill(num, numZeros) {
+    // ref. http://stackoverflow.com/questions/1267283/how-can-i-create-a-zerofilled-value-using-javascript
+    var n = Math.abs(num);
+    var zeros = Math.max(0, numZeros - Math.floor(n).toString().length );
+    var zeroString = Math.pow(10,zeros).toString().substr(1);
+    if( num < 0 ) {
+        zeroString = '-' + zeroString;
+    }
+
+    return zeroString+n;
 }
 
 exports.index = function (req, res) {
@@ -35,7 +47,7 @@ exports.index = function (req, res) {
 
     async.parallel([
             function (callback) {
-                couch.view('docs', 'all', function (err, result) {
+                couch.view('all', 'by_updated_at', function (err, result) {
                     if (!err) {
                         callback(null, result.rows);
                     } else {
@@ -44,8 +56,7 @@ exports.index = function (req, res) {
                 });
             },
             function (callback) {
-                couch.view('tags', 'all', function (err, result) {
-                    console.log(result);
+                couch.view('tag', 'by_name', function (err, result) {
                     if (!err) {
                         callback(null, result.rows);
                     } else {
@@ -54,8 +65,7 @@ exports.index = function (req, res) {
                 });
             }],
         function (err, results) {
-            params.list = results[0];
-            console.log(params.list);
+            params.list = results[0].reverse();
             params.page_param = getPageParams(Number(results[0].length), Number(params.page), Number(params.pageSize), Number(params.pageGutter));
 
             params.tagCount = results[1].length;
@@ -76,13 +86,14 @@ exports.list = function (req, res) {
     var couch = nano.db.use(req.user.haroo_id);
 
     var listType = (params.type || 'all');
+    var orderType = (params.order || 'by_updated_at');
 
-    couch.view('docs', listType, function (err, result) {
+    couch.view(listType, orderType, function (err, result) {
         if (!err) {
 //            result.rows.forEach(function (doc) {
 //                console.log(doc.key, doc.value);
 //            });
-            params.list = result.rows;
+            params.list = result.rows.reverse();
             params.page_param = getPageParams(Number(result.rows.length), Number(params.page), Number(params.pageSize), Number(params.pageGutter));
 
             res.render('dashboard_list', params);
@@ -110,38 +121,91 @@ exports.documentView = function (req, res) {
     });
 };
 
-exports.documentUpdate = function (req, res) {
+exports.documentUpdatePublic = function (req, res) {
     var params = {
-        user_id: req.user.uid,
-        view_id: req.param('view_id'),
-        publicUrl: req.param('publicUrl') || ''
+        haroo_id: req.user.haroo_id,
+        view_id: req.param('view_id')
     };
-    var couch = nano.db.use(req.user.haroo_id);
 
+    if (!params.haroo_id) return res.send({ ok: false });
     if (!params.view_id) return res.send({ ok: false });
 
-    couch.get(params.view_id, function (err, doc) {
-        if (err) {
-            console.log(err);
-            return res.send({ ok: false });
-        } else {
-            var meta = doc.meta || {};
-            meta.share = meta.share ? null : params.publicUrl;
-            doc.meta = meta;
+    var couch = nano.db.use(params.haroo_id);
 
-            couch.insert(doc, params.view_id, function (err, body) {
-                    if (!err) {
-                        console.log(body);
-                    } else {
-                        console.log(err);
-                    }
+    // generate last count and today
+    var common = require('./common');
+    var today = common.getToday();
+    var counter = 1;
+    var padChar = 3;
+    var shareUrl = '';
 
-                    res.send(body);
-                }
-            );
+    publicDoc.find({ release_date: today }, null, { limit: 1, sort: { counter: -1 }}, function (err, todayDocs) {
+        if (err) return res.send({ ok: false });
+
+        if (!todayDocs.length) {
+            shareUrl = today + '/' + makeZeroFill(counter, padChar);
         }
-    });
 
+        publicDoc.findOne({haroo_id: params.haroo_id, document_id: params.view_id}, function (err, existDoc) {
+            if (!existDoc) {
+                var shareDoc = new publicDoc({
+                    release_date: today,
+                    counter: counter,
+                    public: true,
+                    haroo_id: params.haroo_id,
+                    document_id: params.view_id
+                });
+
+                shareDoc.save(function (err) {
+                    console.log(err);
+                    if (err) return res.send({ok: false});
+                });
+
+                counter = Number(todayDocs[0].counter);
+                shareUrl = today + '/' + makeZeroFill(counter, padChar);
+
+                couch.get(params.view_id, function (err, doc) {
+                    if (err) {
+                        console.log(err);
+                        return res.send({ok: false});
+                    } else {
+                        var meta = doc.meta || {};
+                        // set public url
+                        meta.share = shareUrl;
+                        doc.meta = meta;
+
+                        couch.insert(doc, params.view_id, function (err, body) {
+                            res.send(body);
+                        });
+                    }
+                });
+
+            } else {
+                var isPublic = existDoc.public;
+                existDoc.public = isPublic ? false: true;
+                existDoc.save();
+
+                counter = Number(existDoc.counter);
+                shareUrl = today + '/' + makeZeroFill(counter, padChar);
+
+                couch.get(params.view_id, function (err, doc) {
+                    if (err) {
+                        console.log(err);
+                        return res.send({ok: false});
+                    } else {
+                        var meta = doc.meta || {};
+                        // toggle public url
+                        meta.share = isPublic ? undefined : shareUrl;
+                        doc.meta = meta;
+
+                        couch.insert(doc, params.view_id, function (err, body) {
+                            res.send(body);
+                        });
+                    }
+                });
+            }
+        });
+    });
 };
 
 exports.documentPublicView = function (req, res) {
@@ -151,8 +215,8 @@ exports.documentPublicView = function (req, res) {
         }
     */
     var params = {
-        haroo_id: req.param('haroo_id'),    // todo: replace some id by user defined
-        public_key: req.param('public_key')
+        date: req.param('date'),
+        counter: req.param('counter')
     };
     var couch = nano.db.use(params.haroo_id);
 

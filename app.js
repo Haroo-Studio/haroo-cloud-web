@@ -227,7 +227,7 @@ app.get('/auth/facebook/callback', accountController.linkExternalAccount);
 app.get('/auth/google', passport.authenticate('google', { scope: 'profile email' }));
 app.get('/auth/google/callback', accountController.linkExternalAccount);
 
-app.get('/p/:haroo_id/:public_key', dashboardController.documentPublicView);
+app.get('/p/:date/:counter', dashboardController.documentPublicView);
 
 // restrict session
 app.use(accountController.isAuthenticated);
@@ -241,7 +241,7 @@ app.get('/account/unlink/:provider', accountController.unlinkAccount);
 app.get('/dashboard',  dashboardController.index);
 app.get('/dashboard/list', dashboardController.list);
 app.get('/dashboard/:view_id', dashboardController.documentView);
-app.post('/dashboard/:view_id/update', dashboardController.documentUpdate);
+app.post('/dashboard/:view_id/public', dashboardController.documentUpdatePublic);
 
 // 500 Error Handler
 app.use(errorHandler());

@@ -94,7 +94,7 @@
             var that = $(this);
             var id = that.parent().parent().attr('data-id') || '';
             var token = that.parent().parent().parent().attr('data-id');
-            $.post('/dashboard/' + id + '/update', { publicUrl: id, _csrf: token }, function (result) {
+            $.post('/dashboard/' + id + '/public', { _csrf: token }, function (result) {
                 if (result.ok) {
                     togglePublic(that);
                 }

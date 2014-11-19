@@ -73,7 +73,7 @@
                             <i class="fa fa-tasks"></i> {{ doc.title }}
                             {% if doc.meta.share %}
                             <span class="pull-right" style="margin-left: 1em;">
-                                <a href="{{ site.url }}/p/{{ user.haroo_id }}/{{ doc.meta.share }}" target="_blank"><i class="fa fa-cloud"></i>{{ doc.meta.share }}</a>
+                                <a href="{{ site.url }}/p/{{ doc.meta.share }}" target="_blank"><i class="fa fa-cloud"></i>{{ doc.meta.share }}</a>
                             </span>
                             {% endif %}
                             <span class="pull-right">{{ doc.updated_at|default('doc.created_at')|date('Y-m-d') }}</span>
