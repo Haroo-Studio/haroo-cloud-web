@@ -47,6 +47,7 @@
                 <div class="widget">
                     <div class="widget-title">
                         <a href="{{ site.url }}/p/{{ doc.meta.share }}" target="_blank" style="margin-right: 0.5em;"><i class="fa fa-cloud"></i>{{ doc.title }}</a>
+                        <span><i class="fa fa-eye"></i>{{ doc.meta.view|default(0) }}</span>
                         <span class="pull-right">{{ doc.updated_at|default('doc.created_at')|date('Y-m-d') }}</span>
                     </div>
                     <div class="widget-body">

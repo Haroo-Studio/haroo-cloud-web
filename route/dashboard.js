@@ -229,14 +229,19 @@ exports.documentPublicView = function (req, res) {
         var couch = nano.db.use(publicDoc.haroo_id);
 
         couch.get(publicDoc.document_id, function (err, doc) {
+            var meta = doc.meta;
+            meta['view'] = meta['view'] ? Number(meta['view']) + 1 : 1;
+            doc.meta = meta;
 
-            params.doc = doc;
-            console.log(doc);
-            if (!err) {
-                res.render('document_public_view', params);
-            } else {
-                res.status(500).send('NOTHING TO SHOW, PLEASE USE CORRECT PUBLIC URL');
-            }
+            couch.insert(doc, publicDoc.document_id, function (err, docByCounted) {
+                console.log(docByCounted);
+                params.doc = doc;
+                if (!err) {
+                    res.render('document_public_view', params);
+                } else {
+                    res.status(500).send('NOTHING TO SHOW, PLEASE USE CORRECT PUBLIC URL');
+                }
+            });
         });
     });
 };
