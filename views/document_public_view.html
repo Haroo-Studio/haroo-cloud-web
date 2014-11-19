@@ -24,7 +24,6 @@
     <div class="page-content">
         <!-- Main Content -->
 
-        {% for doc in list %}
         <div class="row">
             <div class="col-lg-12">
                 <div class="widget">
@@ -33,11 +32,11 @@
                             <i class="fa fa-sitemap"></i>
                         </div>
                         <div class="widget-content pull-left">
-                            <div class="title" title="Tags">{{ doc.value.tags.length }}</div>
+                            <div class="title" title="Tags">{{ doc.tags.length }}</div>
                             <div class="comment">Tags</div>
                         </div>
                         <div style="padding-left: 8em;">
-                            {{ doc.value.toc.html | safe }}
+                            {{ doc.toc.html | safe }}
                         </div>
                         <div class="clearfix"></div>
                     </div>
@@ -47,19 +46,17 @@
             <div class="col-lg-12">
                 <div class="widget">
                     <div class="widget-title">
-                        <a href="{{ site.url }}/p/{{ haroo_id }}/{{ doc.value.meta.share }}" target="_blank" style="margin-right: 0.5em;"><i class="fa fa-cloud"></i>{{ doc.value.title }}</a>
-                        <span class="pull-right">{{ doc.value.updated_at|default('doc.value.created_at')|date('Y-m-d') }}</span>
-                        <span class="pull-right" style="margin-right: 0.5em;"><small><i class="fa fa-key"></i>{{ doc.id }}</small></span>
+                        <a href="{{ site.url }}/p/{{ doc.meta.share }}" target="_blank" style="margin-right: 0.5em;"><i class="fa fa-cloud"></i>{{ doc.title }}</a>
+                        <span class="pull-right">{{ doc.updated_at|default('doc.created_at')|date('Y-m-d') }}</span>
                     </div>
                     <div class="widget-body">
                         <div class="">
-                            {{ doc.value.html | safe }}
+                            {{ doc.html | safe }}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        {% endfor %}
     </div>
 </div>
 
