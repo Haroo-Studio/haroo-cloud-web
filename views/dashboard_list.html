@@ -96,15 +96,15 @@
             var token = that.parent().parent().parent().attr('data-id');
             $.post('/dashboard/' + id + '/public', { _csrf: token }, function (result) {
                 if (result.ok) {
-                    togglePublic(that);
+                    togglePublic(that, result.public);
                 }
             });
         });
     });
 
-    function togglePublic($el) {
+    function togglePublic($el, isPublic) {
         var icon = $el.children('i.fa');
-        if (icon.hasClass('fa-toggle-off')) {
+        if (isPublic) {
             icon.removeClass('fa-toggle-off').addClass('fa-toggle-on');
         } else {
             icon.addClass('fa-toggle-off').removeClass('fa-toggle-on');

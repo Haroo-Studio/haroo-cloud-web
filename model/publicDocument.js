@@ -7,8 +7,8 @@ var mongoose = require('mongoose');
 var publicDocSchema = new mongoose.Schema({
     release_date: { type: String, index: true },
     counter: { type: Number, index: true },
-    haroo_id: String,
-    document_id: String,
+    haroo_id: { type: String, index: true },
+    document_id: { type: String, index: true },
     public: Boolean,
     subscribe_user: Array
 });

@@ -161,7 +161,7 @@ exports.documentUpdatePublic = function (req, res) {
                     if (err) return res.send({ok: false});
                 });
 
-                counter = Number(todayDocs[0].counter);
+                counter = Number(todayDocs[0] && todayDocs[0].counter ? todayDocs[0].counter : counter);
                 shareUrl = today + '/' + makeZeroFill(counter, padChar);
 
                 couch.get(params.view_id, function (err, doc) {
@@ -175,7 +175,11 @@ exports.documentUpdatePublic = function (req, res) {
                         doc.meta = meta;
 
                         couch.insert(doc, params.view_id, function (err, body) {
-                            res.send(body);
+                            var result = {
+                                ok: true,
+                                public: true
+                            };
+                            res.send(result);
                         });
                     }
                 });
@@ -199,7 +203,11 @@ exports.documentUpdatePublic = function (req, res) {
                         doc.meta = meta;
 
                         couch.insert(doc, params.view_id, function (err, body) {
-                            res.send(body);
+                            var result = {
+                                ok: true,
+                                public: !isPublic
+                            };
+                            res.send(result);
                         });
                     }
                 });
@@ -209,24 +217,35 @@ exports.documentUpdatePublic = function (req, res) {
 };
 
 exports.documentPublicView = function (req, res) {
-    /*
-        "public": {
-            "map": "function (doc) {\n          if (doc.meta) {\n            emit(doc.meta.share, doc)\n          }\n        }"
-        }
-    */
     var params = {
         date: req.param('date'),
-        counter: req.param('counter')
+        counter: Number(req.param('counter'))
     };
-    var couch = nano.db.use(params.haroo_id);
 
-    couch.view('search','public', { keys: [params.public_key] }, function (err, result) {
-        console.log(result);
-        params.list = result.rows;
-        if (!err && params.list.length) {
-            res.render('document_public_view', params);
-        } else {
-            res.status(500).send('NOTHING TO SHOW, PLEASE USE CORRECT PUBLIC URL');
-        }
+    console.log(params);
+
+    publicDoc.findOne({release_date: params.date, counter: params.counter}, function (err, publicDoc) {
+        console.log(publicDoc);
+
+        var couch = nano.db.use(publicDoc.haroo_id);
+
+        couch.get(publicDoc.document_id, function (err, doc) {
+            params.doc = doc;
+            if (!err) {
+                res.render('document_public_view', params);
+            } else {
+                res.status(500).send('NOTHING TO SHOW, PLEASE USE CORRECT PUBLIC URL');
+            }
+        });
+
+        //couch.view('search','public', { keys: [params.public_key] }, function (err, result) {
+        //    console.log(result);
+        //    params.list = result.rows;
+        //    if (!err && params.list.length) {
+        //        res.render('document_public_view', params);
+        //    } else {
+        //        res.status(500).send('NOTHING TO SHOW, PLEASE USE CORRECT PUBLIC URL');
+        //    }
+        //});
     });
 };
