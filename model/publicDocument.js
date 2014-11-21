@@ -13,4 +13,4 @@ var publicDocSchema = new mongoose.Schema({
     subscribe_user: Array
 });
 
-module.exports = mongoose.model('PublicDocument', publicDocSchema);
+module.exports = mongoose.model('public_document', publicDocSchema);
