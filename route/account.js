@@ -2,6 +2,7 @@ var _ = require('lodash');
 var Pipe = require('pipe');
 
 var database = require('../config/database');
+var mailer = require('../config/mailer');
 
 var Account = Pipe.Account;
 var AccountLog = Pipe.AccountLog;
@@ -101,6 +102,7 @@ exports.login = function(req, res) {
         }
     })(req, res);
 };
+
 exports.signUpForm = function (req, res) {
     var params = {};
     if (req.isAuthenticated()) return res.redirect('/');
@@ -124,49 +126,25 @@ exports.signUp = function (req, res, next) {
         email: req.param('email'),
         password: req.param('password'),
         nickname: req.param('nickname'),
-        accessIP: req['ip'],
-        database: database,
-        result: {}
+        database: database
     };
 
-
-    var user = new Account({
-        email: req.param('email'),
-        password: req.param('password'),
-        created_at: new Date(),
-        from_web: 'public homepage',
-        profile: {
-            name: req.param('nickname')
-        }
-    });
-
-    Account.findOne({ email: req.param('email') }, function(err, existingUser) {
-        if (existingUser) {
-            console.log('Account with that email address already exists.');
-            req.flash('errors', { msg: 'Account with that email address already exists.' });
-
-            return res.redirect('back');
+    Account.createByEmailFromWeb(params, function (err, result) {
+        if(err && result['email']) {
+            req.flash('errors', err);
+            res.redirect('back');
+        } else if (err) {
+            req.flash('errors', { msg: 'Database Errors' });
+            res.redirect('back');
         } else {
-            user.haroo_id = AccountInit.initHarooID(req.param('email'));
-            user.login_expire = Common.getLoginExpireDate();
-
-            AccountInit.initAccount(user.haroo_id, database);
-
-            user.save(function(err) {
+            req.logIn(result, function (err) {
                 if (err) {
-                    console.log(err);
-                    return next(err);
+                    req.flash('errors', { msg: 'Web server Session Error' });
+                    res.redirect('back');
                 }
-                req.logIn(user, function (err) {
-                    if (err) {
-                        console.log(err);
-                        return next(err);
-                    }
-                    Common.saveAccountAccessLog('created_at', req.param('email'));
-
-                    res.redirect('/');
-                });
             });
+
+            res.redirect('/');
         }
     });
 };
@@ -285,23 +263,22 @@ exports.resetPassword = function (req, res) {
 
     var params = {
         email: req.param('email'),
+        email_token: mailer['email-token'],
+        protocol: req.protocol,
+        hostname: req.hostname,
         sent: true
     };
 
-    Account.findOne({ email: req.param('email') }, function (err, existAccount) {
-        if (!existAccount) {
-            req.flash('info', { msg: 'Email is not valid' });
+    Account.passwordResetByEmailFromWeb(params, function (err, account) {
+        if (err) {
+            req.flash('errors', err);
             return res.redirect('/account/reset-password');
         }
 
-        var randomToken = uuid.v4();
-
-        existAccount.reset_password_token = randomToken;
-        existAccount.reset_password_token_expire = Common.getPasswordResetExpire();
-        existAccount.save();
-        var host = req.protocol + '://' + req.hostname;
-
-        Common.sendPasswordResetMail(existAccount.email, { link: host + '/account/update-password/' + randomToken });
+        if (!account) {
+            req.flash('errors', {msg: "No Account Exist"});
+            return res.redirect('/account/reset-password');
+        }
 
         res.render('reset-password', params);
     });
