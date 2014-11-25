@@ -14,6 +14,7 @@ var Account = require('../model/account');
 var AccountInit = require('../model/accountInit');
 
 var common = require('./common');
+var database = require('../config/database');
 
 var hostEnv = process.env.NODE_ENV || 'development';
 var passportSecretToken = require('../config/passport')[hostEnv];
@@ -79,7 +80,7 @@ passport.use(new TwitterStrategy(passportSecretToken['twitter'], function(req, a
 
 
                 user.save(function(err) {
-                    AccountInit.initAccount(user.haroo_id);
+                    AccountInit.initAccount(user.haroo_id, database);
 
                     callback(err, user);
                 });
@@ -117,7 +118,7 @@ passport.use(new FacebookStrategy(passportSecretToken['facebook'], function(req,
                 user.login_expire = common.getLoginExpireDate();
 
                 user.save(function(err) {
-                    AccountInit.initAccount(user.haroo_id);
+                    AccountInit.initAccount(user.haroo_id, database);
 
                     callback(err, user);
                 });
@@ -154,7 +155,7 @@ passport.use(new GoogleStrategy(passportSecretToken['google'], function(req, acc
 
 
                 user.save(function (err) {
-                    AccountInit.initAccount(user.haroo_id);
+                    AccountInit.initAccount(user.haroo_id, database);
 
                     callback(err, user);
                 });

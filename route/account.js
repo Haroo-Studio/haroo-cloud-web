@@ -1,12 +1,13 @@
 var _ = require('lodash');
-var passport = require('passport');
-var uuid = require('node-uuid');
+var Pipe = require('pipe');
 
-var Account = require('../model/account');
-var Logging = require('../model/accountLog');
-var AccountInit = require('../model/accountInit');
+var database = require('../config/database');
 
-var common = require('./common');
+var Account = Pipe.Account;
+var AccountLog = Pipe.AccountLog;
+var Passport = Pipe.Passport;
+
+var Common = Pipe.CommonUtil;
 
 // Login Required middleware.
 exports.isAuthenticated = function(req, res, callback) {
@@ -33,7 +34,7 @@ exports.linkExternalAccount = function (req, res, next) {
         fail: '/login'
     };
 
-    passport.authenticate(provider, function (err, user, info) {
+    Passport.authenticate(provider, function (err, user, info) {
         if (err) {
             return next(err);
         }
@@ -45,7 +46,7 @@ exports.linkExternalAccount = function (req, res, next) {
                 return next(err);
             }
 
-            common.saveAccountLinkLog(provider, user.email);
+            Common.saveAccountLinkLog(provider, user.email);
 
             // clear client session
             req.session.clientRoute = null;
@@ -58,12 +59,7 @@ exports.linkExternalAccount = function (req, res, next) {
 exports.logout = function(req, res) {
     if (req.isAuthenticated()) {
         var userEmail = req.user['email'];
-        Logging.findOneAndUpdate({ email: userEmail }, { signed_out: new Date() }, { sort: { _id : -1 } },
-            function (err, lastLog) {
-                if (!lastLog) {
-                    common.saveAccountAccessLog('signed_out', userEmail);
-                }
-            });
+        AccountLog.logout({email: userEmail});
     }
     req.session.returnTo = '';
     req.logout();
@@ -93,7 +89,7 @@ exports.login = function(req, res) {
             return res.redirect('/login');
         } else {
             Account.findOne({haroo_id: user.haroo_id}, function (err, updateUser) {
-                updateUser.login_expire = common.getLoginExpireDate();
+                updateUser.login_expire = Common.getLoginExpireDate();
                 updateUser.save();
             });
             req.logIn(user, function (err) {
@@ -102,7 +98,7 @@ exports.login = function(req, res) {
                     req.flash('errors', {msg: err});
                     return res.redirect('/login');
                 } else {
-                    common.saveAccountAccessLog('signed_in', req.param('email'));
+                    Common.saveAccountAccessLog('signed_in', req.param('email'));
                     return res.redirect(String(req.session.returnTo) || '/dashboard');
                 }
             });
@@ -128,6 +124,16 @@ exports.signUp = function (req, res, next) {
         return res.redirect('back');
     }
 
+    var params = {
+        email: req.param('email'),
+        password: req.param('password'),
+        nickname: req.param('nickname'),
+        accessIP: req['ip'],
+        database: database,
+        result: {}
+    };
+
+
     var user = new Account({
         email: req.param('email'),
         password: req.param('password'),
@@ -146,9 +152,9 @@ exports.signUp = function (req, res, next) {
             return res.redirect('back');
         } else {
             user.haroo_id = AccountInit.initHarooID(req.param('email'));
-            user.login_expire = common.getLoginExpireDate();
+            user.login_expire = Common.getLoginExpireDate();
 
-            AccountInit.initAccount(user.haroo_id);
+            AccountInit.initAccount(user.haroo_id, database);
 
             user.save(function(err) {
                 if (err) {
@@ -160,7 +166,7 @@ exports.signUp = function (req, res, next) {
                         console.log(err);
                         return next(err);
                     }
-                    common.saveAccountAccessLog('created_at', req.param('email'));
+                    Common.saveAccountAccessLog('created_at', req.param('email'));
 
                     res.redirect('/');
                 });
@@ -295,11 +301,11 @@ exports.resetPassword = function (req, res) {
         var randomToken = uuid.v4();
 
         existAccount.reset_password_token = randomToken;
-        existAccount.reset_password_token_expire = common.getPasswordResetExpire();
+        existAccount.reset_password_token_expire = Common.getPasswordResetExpire();
         existAccount.save();
         var host = req.protocol + '://' + req.hostname;
 
-        common.sendPasswordResetMail(existAccount.email, { link: host + '/account/update-password/' + randomToken });
+        Common.sendPasswordResetMail(existAccount.email, { link: host + '/account/update-password/' + randomToken });
 
         res.render('reset-password', params);
     });

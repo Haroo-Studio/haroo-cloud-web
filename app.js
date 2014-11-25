@@ -1,7 +1,3 @@
-/**
- * Created by soomtong on 2014. 7. 2..
- */
-
 // set global env
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
@@ -24,18 +20,20 @@ var useragent = require('express-useragent');
 var _ = require('lodash');
 var MongoStore = require('connect-mongo')({ session: session });
 var flash = require('express-flash');
-var mongoose = require('mongoose');
-var passport = require('passport');
 var expressValidator = require('express-validator');
 //var connectAssets = require('connect-assets');
-
 
 // Secret Token
 var common = require('./config/common');
 var database = require('./config/database');
+var passport = require('./config/passport');
 
-// Load passport strategy
-require('./route/passport');
+// Load Pipe and Setup
+var Pipe = require('pipe');
+var Passport = Pipe.Passport;
+
+Pipe.MongoInit(database);
+Pipe.PassportConfig(passport);
 
 // Route Controller
 var dashboardController = require('./route/dashboard');
@@ -43,12 +41,6 @@ var accountController = require('./route/account');
 
 // Start Body
 var app = express();
-
-mongoose.connect(database['mongo'].host);
-mongoose.connection.on('error', function() {
-    console.error('MongoDB Connection Error. Make sure MongoDB is running.');
-});
-
 
 // Constant
 var HOUR = 3600000;
@@ -93,8 +85,8 @@ app.use(session({
     })
 }));
 
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(Passport.initialize());
+app.use(Passport.session());
 app.use(flash());
 app.use(function(req, res, callback) {
     // CSRF protection.
@@ -107,7 +99,7 @@ app.use(function(req, res, callback) {
     res.locals.user = req.user;
     res.locals.site = {
         title: "Haroo Cloud Service Hub",
-        url: app.get('hostEnv') == 'production' ? common['clientAuthUrl'] : '//localhost:' + common['port'],
+        url: common['clientAuthUrl'],
         dbHost: database['couch']['host'],
         mailHost: common['mailServer']
     };
@@ -218,13 +210,13 @@ app.post('/account/reset-password', accountController.resetPassword);
 app.get('/account/update-password/:token?', accountController.updatePasswordForm);
 app.post('/account/update-password/:token?', accountController.updatePasswordForReset);
 
-app.get('/auth/twitter', passport.authenticate('twitter'));
+app.get('/auth/twitter', Passport.authenticate('twitter'));
 app.get('/auth/twitter/callback', accountController.linkExternalAccount);
 
-app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'user_location'] }));
+app.get('/auth/facebook', Passport.authenticate('facebook', { scope: ['email', 'user_location'] }));
 app.get('/auth/facebook/callback', accountController.linkExternalAccount);
 
-app.get('/auth/google', passport.authenticate('google', { scope: 'profile email' }));
+app.get('/auth/google', Passport.authenticate('google', { scope: 'profile email' }));
 app.get('/auth/google/callback', accountController.linkExternalAccount);
 
 app.get('/p/:date/:counter', dashboardController.documentPublicView);

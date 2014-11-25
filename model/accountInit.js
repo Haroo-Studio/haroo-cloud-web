@@ -12,5 +12,7 @@ exports.initAccount = function (haroo_id) {
 };
 
 exports.initHarooID = function (email) {
-    return InitAccount.initHarooID(email);
+    var nameToken = database['couch']['host'] || "database1";
+
+    return InitAccount.initHarooID(email, nameToken);
 };
