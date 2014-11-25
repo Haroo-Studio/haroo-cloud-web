@@ -83,22 +83,18 @@ exports.login = function(req, res) {
         return res.redirect('/login');
     }
 
-    passport.authenticate('local', function(err, user, info) {
+    Passport.authenticate('local', function(err, user, info) {
         if (err || !user) {
             req.flash('errors', { msg: err || info.message });
             return res.redirect('/login');
         } else {
-            Account.findOne({haroo_id: user.haroo_id}, function (err, updateUser) {
-                updateUser.login_expire = Common.getLoginExpireDate();
-                updateUser.save();
-            });
             req.logIn(user, function (err) {
                 if (err) {
                     console.error(err);
                     req.flash('errors', {msg: err});
                     return res.redirect('/login');
                 } else {
-                    Common.saveAccountAccessLog('signed_in', req.param('email'));
+                    AccountLog.login({email: req.param('email')});
                     return res.redirect(String(req.session.returnTo) || '/dashboard');
                 }
             });
