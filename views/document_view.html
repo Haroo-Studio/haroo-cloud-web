@@ -7,6 +7,7 @@
                 <i class="fa fa-pencil-square-o" title="Updated at"> {{ item.value['updated_at']|date('Y-m-d H:m:i') }}</i>
                 {%- endif -%}
             </p>
+            {% if item.value['tags'].length %}
             <p class="haroonote-content-tag">
                 {% if item.value['tags'].length > 1 %}
                 <i class="fa fa-tags">
@@ -18,13 +19,16 @@
                 <i class="fa fa-tag"> <a href="#"><span>{{ item.value['tags'] }}</span></a></i>
                 {% endif %}
             </p>
+            {% endif %}
         </div>
         <div class="haroonote-content-controls pure-u-1-2">
-            <button class="secondary-button pure-button">Flag</button>
-            <button class="secondary-button pure-button">Download</button>
+            <button class="secondary-button pure-button {% if item.value['important'] %}pure-button-active{% endif %} important">Important</button>
             {% if item.value['meta'] && item.value['meta'].share -%}
-            <a href="{{ site.url }}/p/{{ item.value['meta'].share }}" target="_blank" class="secondary-button pure-button">Public</a>
+            <a href="{{ site.url }}/p/{{ item.value['meta'].share }}" target="_blank" class="secondary-button pure-button pure-button-active public">Public</a>
+            {%- else -%}
+            <button class="secondary-button pure-button public">Public</button>
             {%- endif %}
+            <button class="secondary-button pure-button download">Download</button>
         </div>
     </div>
 
