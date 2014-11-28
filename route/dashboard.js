@@ -31,13 +31,8 @@ function makeZeroFill(num, numZeros) {
 }
 
 exports.index = function (req, res) {
-    /*
-         "all": {
-            "map": "function (doc) {\n          if (doc.type && !doc.trash) {\n            emit([ Date.parse(doc.updated_at) ], doc)\n          }\n        }"
-         }
-    */
     var params = {
-        user_id: req.user.uid,
+        gravatar: '',// get gravatar image if exist (use request by user email)
         list: [],
         page: req.param('p') || 1,
         pageSize: 20,
@@ -66,9 +61,8 @@ exports.index = function (req, res) {
             }],
         function (err, results) {
             params.list = results[0].reverse();
+            params.tags = results[1].reverse();
             params.page_param = getPageParams(Number(results[0].length), Number(params.page), Number(params.pageSize), Number(params.pageGutter));
-
-            params.tagCount = results[1].length;
 
             res.render('dashboard', params);
         });
