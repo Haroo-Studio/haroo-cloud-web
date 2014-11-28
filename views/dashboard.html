@@ -7,182 +7,59 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="http://pad.haroopress.com/assets/haroopad.ico">
-
     <title>{{ site.title }}</title>
-
-    <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="/components/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/components/font-awesome/css/font-awesome.min.css">
+    <link href="/components/pure/pure-min.css" rel="stylesheet">
+    <link href="/components/pure/grids-responsive-min.css" rel="stylesheet">
+    <link href="/components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/dashboard/dashboard.css">
-    <link rel="stylesheet" href="/css/haroo-cloud-common.css">
-    <link rel="stylesheet" href="/css/haroo-cloud-patch.css">
 </head>
 <body>
-<div id="page-wrapper" class="active">
-
+<div id="layout" class="content pure-g">
     {% include 'partials/dashboard_sidemenu.html' %}
 
-    <div id="content-wrapper">
-        <div class="page-content">
-            <!-- Header Bar -->
-            <div class="row header">
-                <div class="col-xs-12">
-                    <div class="meta pull-left">
-                        <div class="page">
-                            Dashboard
-                        </div>
-                        <div class="breadcrumb-links">
-                            <a href="/">Home</a> / Dashboard
-                        </div>
-                    </div>
-                    {% include 'partials/dashboard_account_info.html' %}
-                </div>
-            </div>
+    <div id="list" class="pure-u-1">
+        {% include 'partials/flash-message.html' %}
 
-            <!-- End Header Bar -->
-
-            <!-- Main Content -->
-            <div class="row">
-                <div class="col-xs-12">
-                    {% include 'partials/flash-message.html' %}
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-lg-3 col-md-6 col-xs-12">
-                    <div class="widget">
-                        <div class="widget-body">
-                            <div class="widget-icon green pull-left">
-                                <i class="fa fa-users"></i>
-                            </div>
-                            <div class="widget-content pull-left">
-                                <div class="title">80</div>
-                                <div class="comment">Follower</div>
-                            </div>
-                            <div class="clearfix"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-xs-12">
-                    <div class="widget">
-                        <div class="widget-body">
-                            <div class="widget-icon red pull-left">
-                                <i class="fa fa-tasks"></i>
-                            </div>
-                            <div class="widget-content pull-left">
-                                <div class="title">16</div>
-                                <div class="comment">Favorite</div>
-                            </div>
-                            <div class="clearfix"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-xs-12">
-                    <div class="widget">
-                        <div class="widget-body">
-                            <div class="widget-icon orange pull-left">
-                                <i class="fa fa-sitemap"></i>
-                            </div>
-                            <div class="widget-content pull-left">
-                                <div class="title">225</div>
-                                <div class="comment">Documents</div>
-                            </div>
-                            <div class="clearfix"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="spacer visible-xs"></div>
-                <div class="col-lg-3 col-md-6 col-xs-12">
-                    <div class="widget">
-                        <div class="widget-body">
-                            <div class="widget-icon blue pull-left">
-                                <i class="fa fa-support"></i>
-                            </div>
-                            <div class="widget-content pull-left">
-                                <div class="title">{{ tagCount }}</div>
-                                <div class="comment">Tags</div>
-                            </div>
-                            <div class="clearfix"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="widget">
-                        <div class="widget-title">
-                            <i class="fa fa-tasks"></i> Documents
-                            <a href="#" class="pull-right">Manage</a>
-                        </div>
-                        <div class="widget-body no-padding">
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <tbody>
-                                    {% for item in list %}
-                                    <tr>
-                                        <td style="width: 5em;">{{ page_param.lineCounter - loop.index0 }}</td>
-                                        <td><a href="/dashboard/{{ item.id | safe }}">{{ item.value['title'] }}</a></td>
-                                        <td style="width: 8em;">{{ item.value.updated_at|date('Y-m-d') || item.value.created_at|date('Y-m-d') }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="widget">
-                        <div class="widget-title">
-                            <i class="fa fa-users"></i> Users
-                            <input type="text" placeholder="Search" class="form-control input-sm pull-right"/>
-
-                            <div class="clearfix"></div>
-                        </div>
-                        <div class="widget-body no-padding">
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th class="text-center">ID</th>
-                                        <th>Username</th>
-                                        <th>Role</th>
-                                        <th>Account</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td class="text-center">1</td>
-                                        <td>Joe Bloggs</td>
-                                        <td>Super Admin</td>
-                                        <td>AZ23045</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">2</td>
-                                        <td>Timothy Hernandez</td>
-                                        <td>Admin</td>
-                                        <td>AU24783</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">3</td>
-                                        <td>Joe Bickham</td>
-                                        <td>User</td>
-                                        <td>AM23781</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        {% for item in list %}
+        {% set type = item.value['type'] || 'note' %}
+        <div class="haroonote-item pure-g haroonote-item-{{ type }}" data-id="{{ item.id | safe }}">
+            <div class="pure-u-1">
+                {% if item.value['tags'].length %}
+                <h5 class="haroonote-item-tags">{{ item.value['tags'] }}</h5>
+                {% endif %}
+                <h4 class="haroonote-subject">{{ item.value['title'] }}</h4>
+                <p class="haroonote-desc">
+                    Hey, I just wanted to check in with you from Toronto. I got here earlier today.
+                </p>
+                <p class="haroonote-meta">
+                    {{- item.value.updated_at|date('Y-m-d') || item.value.created_at|date('Y-m-d') -}}
+                </p>
             </div>
         </div>
+        {% endfor %}
+        <div class="haroonote-item haroonote-item-selected pure-g">
+            <div class="pure-u">
+                <img class="email-avatar" height="64" width="64" src="/img/avatar.jpg">
+            </div>
+
+            <div class="pure-u-3-4">
+                <h5 class="haroonote-item-tags">Tilo Mitra</h5>
+                <h4 class="haroonote-subject">Hello from Toronto</h4>
+                <p class="haroonote-desc">
+                    Hey, I just wanted to check in with you from Toronto. I got here earlier today.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="main" class="pure-u-1">
+        {% for item in list %}
+        {% include 'document_view.html' with item %}
+        {% endfor %}
     </div>
 </div>
 <!-- End Page Wrapper -->
 <script src="/components/jquery/dist/jquery.min.js"></script>
-<script src="/components/bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="/components/jquery-cookie/jquery.cookie.js"></script>
 <script src="/js/dashboard.js"></script>
 </body>
 </html>

@@ -1,79 +1,85 @@
 body {
   color: #a0a5b7;
 }
+
 a {
   text-decoration: none;
   color: #7f8c8d;
 }
-#layout,
-#nav,
-#list,
-#main {
+
+#layout, #nav, #list, #main {
   margin: 0;
   padding: 0;
 }
+
 #nav {
   width: 100%;
   height: 40px;
   position: relative;
   background: #e6e6e6;
   text-align: center;
+  .nav-menu-button {
+    display: block;
+    top: 0.5em;
+    right: 0.5em;
+    position: absolute;
+    text-transform: uppercase;
+    i {
+      padding: 4px 4px 2px 4px;
+      -webkit-box-shadow: none;
+      -moz-box-shadow: none;
+      box-shadow: none;
+      border-radius: 3px;
+    }
+  }
+  .nav-menu-avatar {
+    display: block;
+    top: 0.5em;
+    left: 0.54em;
+    position: absolute;
+    img {
+      width: 24px;
+      height: 24px;
+    }
+  }
+  .nav-inner {
+    display: none;
+  }
+  .item-count {
+    padding: 3px 5px;
+    background: #d0d0d0;
+    border-radius: 4px;
+    font-size: 0.85em;
+    color: #2e7ebf;
+  }
 }
-#nav .nav-menu-button {
-  display: block;
-  top: 0.5em;
-  right: 0.5em;
-  position: absolute;
-  text-transform: uppercase;
-}
-#nav .nav-menu-button i {
-  padding: 4px 4px 2px 4px;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
-  border-radius: 3px;
-}
-#nav .nav-menu-avatar {
-  display: block;
-  top: 0.5em;
-  left: 0.54em;
-  position: absolute;
-}
-#nav .nav-menu-avatar img {
-  width: 24px;
-  height: 24px;
-}
-#nav .nav-inner {
-  display: none;
-}
-#nav .item-count {
-  padding: 3px 5px;
-  background: #d0d0d0;
-  border-radius: 4px;
-  font-size: 0.85em;
-  color: #2e7ebf;
-}
+
 #nav.active {
   height: 80%;
+  .nav-inner {
+    display: block;
+    padding: 3em 0 1em;
+  }
+  .nav-menu-button {
+    i {
+      background: #c8c8c8;
+    }
+  }
 }
-#nav.active .nav-inner {
-  display: block;
-  padding: 3em 0 1em;
-}
-#nav.active .nav-menu-button i {
-  background: #c8c8c8;
-}
+
 #nav .pure-menu.pure-menu-open {
   background: transparent;
   border: none;
   text-align: left;
-}
-#nav .pure-menu.pure-menu-open i {
-  text-align: center;
-  width: 1.2em;
-}
-#nav .pure-menu.pure-menu-open li a {
-  padding-left: 10px;
+  i {
+    text-align: center;
+    width: 1.2em;
+  }
+  li {
+    a {
+      padding-left: 10px;
+    }
+  }
 }
 #nav .pure-menu a:hover,
 #nav .pure-menu a:focus {
@@ -86,8 +92,9 @@ a {
 #nav .pure-menu-heading {
   border-bottom: none;
   font-size: 0.9em;
-  color: #4b7197;
+  color: rgb(75, 113, 151);
 }
+
 .secondary-button {
   background: #fff;
   border: 1px solid #ddd;
@@ -95,6 +102,9 @@ a {
   padding: 0.4em 1.8em;
   font-size: 80%;
 }
+
+
+
 .haroonote-item {
   padding: 0.9em 1em;
   border-left: 5px solid transparent;
@@ -104,8 +114,7 @@ a {
   border-radius: 3px;
   margin-right: 0.5em;
 }
-.haroonote-item-tags,
-.haroonote-subject {
+.haroonote-item-tags, .haroonote-subject {
   margin: 0;
 }
 .haroonote-item-tags {
@@ -123,6 +132,7 @@ a {
   font-size: 70%;
   margin: 0;
 }
+
 .haroonote-item-selected {
   background: #eee;
 }
@@ -132,31 +142,30 @@ a {
 .haroonote-item-note {
   border-left: 5px solid #28ce6c;
 }
+
 /* Email Content Styles */
-.haroonote-content-header,
-.haroonote-content-body,
-.email-content-footer {
+.haroonote-content-header, .haroonote-content-body, .email-content-footer {
   padding: 1em 1em;
 }
 .haroonote-content-header {
   border-bottom: 1px solid #ddd;
 }
+
 .haroonote-content-title {
   margin: 0.5em 0 0;
 }
-.haroonote-content-subtitle,
-.haroonote-content-date,
-.haroonote-content-tag {
+.haroonote-content-subtitle, .haroonote-content-date, .haroonote-content-tag {
   font-size: 0.8em;
   margin: 0;
   font-weight: normal;
 }
 .haroonote-content-date {
   margin-bottom: 0.2em;
+  i:first-child {
+    margin-right: 1em;
+  }
 }
-.haroonote-content-date i:first-child {
-  margin-right: 1em;
-}
+
 .haroonote-content-tag a:hover {
   color: #4094fe;
   font-weight: bold;
@@ -171,57 +180,62 @@ a {
 .haroonote-content-controls .secondary-button {
   margin: 0.2em 0;
 }
+
 .email-avatar {
   width: 40px;
   height: 40px;
 }
+
+
 /*
  * -- TABLET (AND UP) MEDIA QUERIES --
  */
 @media (min-width: 40em) {
+
   /* Move the layout over so we can fit the nav + list in on the left */
   #layout {
-    padding-left: 500px;
-    /* "left col (nav + list)" width */
+    padding-left:500px; /* "left col (nav + list)" width */
     position: relative;
   }
+
   /* These are position:fixed; elements that will be in the left 500px of the screen */
-  #nav,
-  #list {
+  #nav, #list {
     position: fixed;
     top: 0;
     bottom: 0;
     overflow: auto;
   }
   #nav {
-    margin-left: -500px;
-    /* "left col (nav + list)" width */
-    width: 150px;
+    margin-left:-500px; /* "left col (nav + list)" width */
+    width:150px;
     height: 100%;
+    .nav-inner {
+      display: block;
+      padding: 2em 0;
+    }
+    .nav-menu-avatar {
+      display: block;
+      position: static;
+      margin-top: 2em;
+      img {
+        width: 48px;
+        height: 48px;
+      }
+    }
   }
-  #nav .nav-inner {
-    display: block;
-    padding: 2em 0;
-  }
-  #nav .nav-menu-avatar {
-    display: block;
-    position: static;
-    margin-top: 2em;
-  }
-  #nav .nav-menu-avatar img {
-    width: 48px;
-    height: 48px;
-  }
+
   /* Hide the "Menu" button on larger screens */
   #nav .nav-menu-button {
     display: none;
   }
+
   #list {
     margin-left: -350px;
     width: 100%;
     height: 33%;
     border-bottom: 1px solid #ddd;
   }
+
   #main {
     position: fixed;
     top: 33%;
@@ -229,26 +243,28 @@ a {
     bottom: 0;
     left: 150px;
     overflow: auto;
-    width: auto;
-    /* so that it's not 100% */
+    width: auto; /* so that it's not 100% */
   }
-  .haroonote-content-header,
-  .haroonote-content-body,
-  .email-content-footer {
+
+  .haroonote-content-header, .haroonote-content-body, .email-content-footer {
     padding: 1em 1.5em;
   }
+
 }
+
 /*
  * -- DESKTOP (AND UP) MEDIA QUERIES --
  */
 @media (min-width: 60em) {
+
   /* This will take up the entire height, and be a little thinner */
   #list {
     margin-left: -350px;
-    width: 350px;
+    width:350px;
     height: 100%;
     border-right: 1px solid #ddd;
   }
+
   /* This will now take up it's own column, so don't need position: fixed; */
   #main {
     position: static;
@@ -256,3 +272,4 @@ a {
     padding: 0;
   }
 }
+

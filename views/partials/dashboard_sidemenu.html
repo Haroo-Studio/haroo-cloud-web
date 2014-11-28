@@ -1,44 +1,22 @@
-<div id="sidebar-wrapper">
-    <ul class="sidebar">
-        <li id="toggle-sidebar" class="sidebar-main">
-            <a href="#toggle-sidebar">
-                Dashboard
-                <span class="menu-icon glyphicon glyphicon-transfer"></span>
-            </a>
-        </li>
-        <li class="sidebar-title"><span>Category</span></li>
-        <li class="sidebar-list">
-            <a href="/dashboard/list">Total <span class="menu-icon fa fa-globe"></span></a>
-        </li>
-        <li class="sidebar-list">
-            <a href="/dashboard/list?t=note">Note <span class="menu-icon fa fa-file-text"></span></a>
-        </li>
-        <li class="sidebar-list">
-            <a href="/dashboard/list?t=presentation">Presentation <span class="menu-icon fa fa-video-camera"></span></a>
-        </li>
-        <li class="sidebar-list">
-            <a href="/dashboard/list?t=mail">Mail <span class="menu-icon fa fa-envelope"></span></a>
-        </li>
-        <li class="sidebar-list">
-            <a href="/dashboard/list?t=todo">Todo <span class="menu-icon fa fa-eye"></span></a>
-        </li>
-        <li class="sidebar-list">
-            <a href="/dashboard/list?t=check">Check <span class="menu-icon fa fa-check-square"></span></a>
-        </li>
-        <li class="sidebar-title separator"><span>QUICK LINKS</span></li>
-        <li class="sidebar-list">
-            <a href="#" target="_blank">HarooKit <span class="menu-icon fa fa-external-link"></span></a>
-        </li>
-    </ul>
-    <div class="sidebar-footer">
-        <div class="col-xs-4">
-            <a href="/">Home</a>
-        </div>
-        <div class="col-xs-4">
-            <a href="/about">About</a>
-        </div>
-        <div class="col-xs-4">
-            <a href="/support">Support</a>
+<div id="nav" class="pure-u">
+    <a href="#" class="nav-menu-button"><i class="fa fa-bars"></i></a>
+    <a href="/dashboard" class="nav-menu-avatar">
+        {% if gravatar %}
+        <img class="profile-avatar" src="{{ gravatar }}" alt="user avatar"/>
+        {% else %}
+        <img class="profile-avatar" src="/img/avatar.jpg" alt="user avatar"/>
+        {% endif %}
+    </a>
+    <div class="nav-inner">
+        <div class="pure-menu pure-menu-open">
+            <ul>
+                <li><a href="#"><i class="fa fa-file-text-o"></i> Note <span class="item-count">2</span></a></li>
+                <li><a href="#"><i class="fa fa-laptop"></i> Presentation</a></li>
+                <li><a href="#"><i class="fa fa-tag"></i> Tags</a></li>
+                <li><a href="#"><i class="fa fa-trash"></i> Trash</a></li>
+                <!--<li class="pure-menu-heading">Tags</li>-->
+                <!--<li><a href="#"><span class="email-label-travel"></span>Travel</a></li>-->
+            </ul>
         </div>
     </div>
 </div>
