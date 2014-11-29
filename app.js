@@ -231,7 +231,6 @@ app.post('/account/delete', accountController.deleteAccount);
 app.get('/account/unlink/:provider', accountController.unlinkAccount);
 
 app.get('/dashboard',  dashboardController.index);
-app.get('/dashboard/list', dashboardController.list);
 app.get('/dashboard/:view_id', dashboardController.documentView);
 app.post('/dashboard/:view_id/public', dashboardController.documentUpdatePublic);
 

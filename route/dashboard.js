@@ -34,15 +34,18 @@ exports.index = function (req, res) {
     var params = {
         gravatar: '',// get gravatar image if exist (use request by user email)
         list: [],
+        type: req.param('t'),
         page: req.param('p') || 1,
         pageSize: 20,
         pageGutter: 10
     };
     var couch = nano.db.use(req.user.haroo_id);
+    var listType = (params.type || 'all');
+    var orderType = (params.order || 'by_updated_at');
 
     async.parallel([
             function (callback) {
-                couch.view('all', 'by_updated_at', function (err, result) {
+                couch.view(listType, orderType, function (err, result) {
                     if (!err) {
                         callback(null, result.rows);
                     } else {
@@ -69,33 +72,6 @@ exports.index = function (req, res) {
 };
 
 exports.list = function (req, res) {
-    var params = {
-        type: req.param('t'),
-        user_id: req.user.uid,
-        list: [],
-        page: req.param('p') || 1,
-        pageSize: 20,
-        pageGutter: 10
-    };
-    var couch = nano.db.use(req.user.haroo_id);
-
-    var listType = (params.type || 'all');
-    var orderType = (params.order || 'by_updated_at');
-
-    couch.view(listType, orderType, function (err, result) {
-        if (!err) {
-//            result.rows.forEach(function (doc) {
-//                console.log(doc.key, doc.value);
-//            });
-            params.list = result.rows.reverse();
-            params.page_param = getPageParams(Number(result.rows.length), Number(params.page), Number(params.pageSize), Number(params.pageGutter));
-
-            res.render('dashboard_list', params);
-        } else {
-            console.log(err);
-            res.render('dashboard_list', params);
-        }
-    });
 };
 
 exports.documentView = function (req, res) {

@@ -1,5 +1,6 @@
 var dashboard = {
     id: 1,
+    id_max: 0,
     page: 1,
     init: function ($list, $content) {
         this.id = 1;
@@ -9,7 +10,7 @@ var dashboard = {
         this.viewDocument();
     },
     nextID: function () {
-        if (this.id > 0) this.id++;
+        if (this.id < this.id_max) this.id++;
         this.viewDocument();
     },
     prevID: function () {
@@ -43,6 +44,7 @@ var dashboard = {
 
 $('document').ready(function () {
     dashboard.init($('.haroonote-item'), $('.haroonote-content'));
+    dashboard.id_max = $('#nav').find('ul.category-menu').data('id');
 
     // responsive controls
     $('.nav-menu-button').on('click', function (e) {
