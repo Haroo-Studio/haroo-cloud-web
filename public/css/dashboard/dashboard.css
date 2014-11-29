@@ -131,6 +131,9 @@ a {
   border-left: 5px solid #28ce6c;
 }
 /* Content Styles */
+.haroonote-content {
+  display: none;
+}
 .haroonote-content-header,
 .haroonote-content-body,
 .email-content-footer {
@@ -236,8 +239,7 @@ a {
     bottom: 0;
     left: 150px;
     overflow: auto;
-    width: auto;
-    /* so that it's not 100% */
+    width: 100%;
   }
   .haroonote-content-header,
   .haroonote-content-body,

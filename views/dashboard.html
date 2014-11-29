@@ -22,7 +22,7 @@
 
         {% for item in list %}
         {% set type = item.value['type'] || 'note' %}
-        <div class="haroonote-item pure-g haroonote-item-{{ type }}" data-id="{{ item.id | safe }}">
+        <div class="haroonote-item pure-g haroonote-item-{{ type }}" data-id="{{ loop.index }}">
             <div class="pure-u-1">
                 {% if item.value['tags'].length %}
                 <h5 class="haroonote-item-tags">{{ item.value['tags'] }}</h5>
@@ -54,11 +54,10 @@
 
     <div id="main" class="pure-u-1">
         {% for item in list %}
-        {% include 'document_view.html' with item %}
+        {% include 'partials/dashboard_view.html' with item %}
         {% endfor %}
     </div>
 </div>
-<!-- End Page Wrapper -->
 <script src="/components/jquery/dist/jquery.min.js"></script>
 <script src="/js/dashboard.js"></script>
 </body>
