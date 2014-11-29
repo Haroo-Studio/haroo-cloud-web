@@ -29,7 +29,6 @@
                 {% endif %}
                 <h4 class="haroonote-subject">{{ item.value['title'] }}</h4>
                 <p class="haroonote-desc">
-                    Hey, I just wanted to check in with you from Toronto. I got here earlier today.
                 </p>
                 <p class="haroonote-meta">
                     {{- item.value.updated_at|date('Y-m-d') || item.value.created_at|date('Y-m-d') -}}
@@ -37,19 +36,6 @@
             </div>
         </div>
         {% endfor %}
-        <div class="haroonote-item haroonote-item-selected pure-g">
-            <div class="pure-u">
-                <img class="email-avatar" height="64" width="64" src="/img/avatar.jpg">
-            </div>
-
-            <div class="pure-u-3-4">
-                <h5 class="haroonote-item-tags">Tilo Mitra</h5>
-                <h4 class="haroonote-subject">Hello from Toronto</h4>
-                <p class="haroonote-desc">
-                    Hey, I just wanted to check in with you from Toronto. I got here earlier today.
-                </p>
-            </div>
-        </div>
     </div>
 
     <div id="main" class="pure-u-1">
