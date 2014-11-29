@@ -38,7 +38,6 @@ var dashboard = {
         this.content.hide();
         this.list.filter('[data-id=' + viewID + ']').addClass(selectClass);
         this.content.filter('[data-id=' + viewID + ']').show();
-        $('html,body').stop().animate({scrollTop: 0}, 500);
     }
 };
 
@@ -75,5 +74,6 @@ $('document').ready(function () {
     $('#list').on('click', '.haroonote-item', function (e) {
         var bindID = $(this).data('id');
         dashboard.changeDocument(bindID);
+        $('html,body').stop().animate({scrollTop: 0}, 500);
     });
 });
