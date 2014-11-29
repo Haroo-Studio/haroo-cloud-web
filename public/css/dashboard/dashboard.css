@@ -249,7 +249,8 @@ a {
     position: fixed;
     top: 0;
     bottom: 0;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
   #nav {
     margin-left: -500px;
@@ -257,7 +258,7 @@ a {
     height: 100%;
   }
   #list {
-    margin-left: -350px;
+    left: 150px;
     width: 350px;
     height: 100%;
     border-right: 1px solid #ddd;

@@ -16,7 +16,11 @@
 <body>
 <div id="layout" class="content pure-g">
     {% include 'partials/dashboard_sidemenu.html' %}
-
+    <div id="main" class="pure-u-1">
+        {% for item in list %}
+        {% include 'partials/dashboard_view.html' with item %}
+        {% endfor %}
+    </div>
     <div id="list" class="pure-u-1">
         {% include 'partials/flash-message.html' %}
 
@@ -35,12 +39,6 @@
                 </p>
             </div>
         </div>
-        {% endfor %}
-    </div>
-
-    <div id="main" class="pure-u-1">
-        {% for item in list %}
-        {% include 'partials/dashboard_view.html' with item %}
         {% endfor %}
     </div>
 </div>
