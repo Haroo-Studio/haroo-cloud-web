@@ -38,9 +38,7 @@ var dashboard = {
         this.content.hide();
         this.list.filter('[data-id=' + viewID + ']').addClass(selectClass);
         this.content.filter('[data-id=' + viewID + ']').show();
-
-        // if mobile width
-        // position: absolute, top: 40px, background: white, height: 100%
+        $('html,body').stop().animate({scrollTop: 0}, 500);
     }
 };
 

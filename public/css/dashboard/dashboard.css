@@ -5,15 +5,15 @@ a {
   text-decoration: none;
   color: #7f8c8d;
 }
+/*
+ * DEFAULT (MOBILE) LAYOUT
+ */
 #layout,
 #nav,
 #list,
 #main {
   margin: 0;
   padding: 0;
-}
-#main {
-  display: none;
 }
 /* Nav Style */
 #nav {
@@ -189,7 +189,7 @@ a {
   font-size: 80%;
 }
 /*
- * -- TABLET (AND UP) MEDIA QUERIES --
+ * TABLET (AND UP) MEDIA QUERIES
  */
 @media (min-width: 40em) {
   #layout {
@@ -237,7 +237,7 @@ a {
   }
 }
 /*
- * -- DESKTOP (AND UP) MEDIA QUERIES --
+ * DESKTOP (AND UP) MEDIA QUERIES
  */
 @media (min-width: 60em) {
   #layout {
@@ -264,7 +264,6 @@ a {
     border-right: 1px solid #ddd;
   }
   #main {
-    display: block;
     position: static;
     margin: 0;
     padding: 0;
