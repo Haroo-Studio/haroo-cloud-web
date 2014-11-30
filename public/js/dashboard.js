@@ -45,10 +45,8 @@ var dashboard = {
 var dashboardViewCtrl = {
     token: '',
     togglePublic: function (viewID, callback) {
-        //$.post('/test', {_csrf: this.token}, function (result) {
         $.post('/dashboard/' + viewID + '/public', {_csrf: this.token}, function (result) {
-            console.log(result);
-            if (result.ok) {
+            if (result.code) {
                 callback(result.public);
             }
         });
@@ -107,6 +105,7 @@ $('document').ready(function () {
         pub: '.public',
         dwn: '.download'
     };
+
     dashboardViewCtrl.token = main.data('id');
 
     viewControl.on('click', toggleStr.imp, function (e) {

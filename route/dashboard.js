@@ -89,7 +89,8 @@ exports.documentUpdatePublic = function (req, res) {
 
     var couch = nano.db.use(params['haroo_id']);
 
-    Document.togglePublicFromWeb(couch, params, function (result) {
+    Document.togglePublic(couch, params, function (result) {
+        console.log(result);
         res.send(result);
     });
 };
