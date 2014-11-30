@@ -16,7 +16,7 @@
 <body>
 <div id="layout" class="content pure-g">
     {% include 'partials/dashboard_sidemenu.html' %}
-    <div id="main" class="pure-u-1">
+    <div id="main" class="pure-u-1" data-id="{{ _csrf }}">
         {% for item in list %}
         {% include 'partials/dashboard_view.html' with item %}
         {% endfor %}

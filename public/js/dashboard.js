@@ -42,6 +42,26 @@ var dashboard = {
     }
 };
 
+var dashboardViewCtrl = {
+    token: '',
+    togglePublic: function (viewID, callback) {
+        //$.post('/test', {_csrf: this.token}, function (result) {
+        $.post('/dashboard/' + viewID + '/public', {_csrf: this.token}, function (result) {
+            console.log(result);
+            if (result.ok) {
+                callback(result.public);
+            }
+        });
+    },
+    toggleAction: function ($el, isPublic) {
+        if (isPublic) {
+            !$el.hasClass('pure-button-active') && $el.addClass('pure-button-active');
+        } else {
+            !$el.hasClass('pure-button-active') && $el.removeClass('pure-button-active');
+        }
+    }
+};
+
 $('document').ready(function () {
     dashboard.init($('.haroonote-item'), $('.haroonote-content'));
     dashboard.id_max = $('#nav').find('ul.category-menu').data('id');
@@ -77,5 +97,37 @@ $('document').ready(function () {
         var bindID = $(this).data('id');
         dashboard.changeDocument(bindID);
         $('html,body').stop().animate({scrollTop: 0}, 500);
+    });
+
+    // document meta control
+    var main = $('#main');
+    var viewControl = main.children().find('.haroonote-content-controls');
+    var toggleStr = {
+        imp: '.important',
+        pub: '.public',
+        dwn: '.download'
+    };
+    dashboardViewCtrl.token = main.data('id');
+
+    viewControl.on('click', toggleStr.imp, function (e) {
+        var that = $(this);
+        var viewID = that.parent().data('id') || '';
+        dashboardViewCtrl.togglePublic(viewID, function (isPublic) {
+            dashboardViewCtrl.toggleAction(that, isPublic);
+        });
+    });
+    viewControl.on('click', toggleStr.pub, function (e) {
+        var that = $(this);
+        var viewID = that.parent().data('id') || '';
+        dashboardViewCtrl.togglePublic(viewID, function (isPublic) {
+            dashboardViewCtrl.toggleAction(that, isPublic);
+        });
+    });
+    viewControl.on('click', toggleStr.dwn, function (e) {
+        var that = $(this);
+        var viewID = that.parent().data('id') || '';
+        dashboardViewCtrl.togglePublic(viewID, function (isPublic) {
+            dashboardViewCtrl.toggleAction(that, isPublic);
+        });
     });
 });
