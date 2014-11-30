@@ -68,7 +68,7 @@
                         {% if messages.errors %}
                         <div class="alert-msg">
                             {% for error in messages.errors %}
-                            <div>- {{ error.msg }}</div>
+                            <div>- {{ error.msg.en }}</div>
                             {% endfor %}
                         </div>
                         {% endif %}

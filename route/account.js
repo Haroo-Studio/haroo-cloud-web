@@ -8,6 +8,7 @@ var Account = Pipe.Account;
 var AccountLog = Pipe.AccountLog;
 var Passport = Pipe.Passport;
 
+var Code = Pipe.HarooCode;
 var Common = Pipe.CommonUtil;
 
 // Login Required middleware.
@@ -126,25 +127,24 @@ exports.signUp = function (req, res, next) {
         email: req.param('email'),
         password: req.param('password'),
         nickname: req.param('nickname'),
-        database: database
+        database: database,
+        fromWeb: true
     };
 
-    Account.createByEmailFromWeb(params, function (err, result) {
-        if(err && result['email']) {
-            req.flash('errors', err);
-            res.redirect('back');
-        } else if (err) {
-            req.flash('errors', { msg: 'Database Errors' });
+    Account.createByEmail(params, function (result, user) {
+        console.log(result);
+        if (result.code != Code.account.create.done.code) {
+            req.flash('errors', {msg: result.msg});
             res.redirect('back');
         } else {
-            req.logIn(result, function (err) {
+            req.logIn(user, function (err) {
                 if (err) {
-                    req.flash('errors', { msg: 'Web server Session Error' });
+                    req.flash('errors', {msg: err});
                     res.redirect('back');
+                } else {
+                    res.redirect('/');
                 }
             });
-
-            res.redirect('/');
         }
     });
 };
@@ -269,14 +269,14 @@ exports.resetPassword = function (req, res) {
         sent: true
     };
 
-    Account.passwordResetByEmailFromWeb(params, function (err, account) {
-        if (err) {
-            req.flash('errors', err);
+    Account.passwordResetByEmail(params, function (result) {
+        if (result.code != Code.account.password.send_mail.code) {
+            req.flash('errors', {msg: result.msg});
             return res.redirect('/account/reset-password');
         }
 
-        if (!account) {
-            req.flash('errors', {msg: "No Account Exist"});
+        if (result.code == Code.account.password.no_exist.code) {
+            req.flash('errors', {msg: result.msg});
             return res.redirect('/account/reset-password');
         }
 
