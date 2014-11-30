@@ -57,7 +57,7 @@ var dashboardViewCtrl = {
         if (isPublic) {
             !$el.hasClass('pure-button-active') && $el.addClass('pure-button-active');
         } else {
-            !$el.hasClass('pure-button-active') && $el.removeClass('pure-button-active');
+            $el.hasClass('pure-button-active') && $el.removeClass('pure-button-active');
         }
     }
 };
