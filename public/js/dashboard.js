@@ -47,9 +47,18 @@ var dashboardViewCtrl = {
     togglePublic: function (viewID, callback) {
         $.post('/dashboard/' + viewID + '/public', {_csrf: this.token}, function (result) {
             if (result.code) {
-                callback(result.public);
+                callback(result.public, result.shareUrl && result.shareUrl);
             }
         });
+    },
+    toggleLink: function ($el, linkUrl) {
+        if ($el.attr('href')) {
+            $el.attr('href', '');
+            $el.hide();
+        } else {
+            $el.attr('href', "/p/" + linkUrl);
+            $el.show();
+        }
     },
     toggleAction: function ($el, isPublic) {
         if (isPublic) {
@@ -118,8 +127,9 @@ $('document').ready(function () {
     viewControl.on('click', toggleStr.pub, function (e) {
         var that = $(this);
         var viewID = that.parent().data('id') || '';
-        dashboardViewCtrl.togglePublic(viewID, function (isPublic) {
+        dashboardViewCtrl.togglePublic(viewID, function (isPublic, shareUrl) {
             dashboardViewCtrl.toggleAction(that, isPublic);
+            dashboardViewCtrl.toggleLink(that.siblings('a.link'), shareUrl)
         });
     });
     viewControl.on('click', toggleStr.dwn, function (e) {

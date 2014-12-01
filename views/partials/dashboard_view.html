@@ -23,11 +23,11 @@
         </div>
         <div class="haroonote-content-controls pure-u-1-2" data-id="{{ item.value['_id']|safe }}">
             <button class="secondary-button pure-button {% if item.value['important'] %}pure-button-active {% endif %}important">Important</button>
-            {% if item.value['meta'] && item.value['meta'].share -%}
-            <!--<a href="{{ site.url }}/p/{{ item.value['meta'].share }}" target="_blank" class="secondary-button pure-button pure-button-active public">Public</a>-->
             <button class="secondary-button pure-button {% if item.value['meta'] && item.value['meta'].share %}pure-button-active {% endif %}public">Public</button>
-            {%- else -%}
-            <button class="secondary-button pure-button public">Public</button>
+            {% if item.value['meta'] && item.value['meta'].share -%}
+            <a href="{{ site.url }}/p/{{ item.value['meta'].share }}" target="_blank" class="secondary-button pure-button link">Link</a>
+            {% else %}
+            <a href="" target="_blank" class="secondary-button pure-button link" style="display: none">Link</a>
             {%- endif %}
             <button class="secondary-button pure-button download">Download</button>
         </div>
