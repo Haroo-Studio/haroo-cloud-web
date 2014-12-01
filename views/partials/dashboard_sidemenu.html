@@ -1,7 +1,9 @@
 <div id="nav" class="pure-u">
     <a class="nav-menu-button"><i class="fa fa-bars"></i></a>
     <a href="/dashboard" class="nav-menu-avatar">
-        {% if gravatar %}
+        {% if user.profile.picture %}
+        <img class="profile-avatar" src="{{ user.profile.picture }}" alt="user avatar"/>
+        {% elseif isGravatar && gravatar %}
         <img class="profile-avatar" src="{{ gravatar }}" alt="user avatar"/>
         {% else %}
         <img class="profile-avatar" src="/img/avatar.jpg" alt="user avatar"/>

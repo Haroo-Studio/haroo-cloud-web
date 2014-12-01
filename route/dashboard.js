@@ -1,8 +1,10 @@
 var async = require('async');
+var request = require('request');
 var Pipe = require('pipe');
 
 var database = require('../config/database');
 
+var Common = Pipe.CommonUtil;
 var Document = Pipe.Document;
 var nano = Pipe.CouchConnect(database);
 
@@ -21,6 +23,7 @@ function getPageParams (totalCount, nowPage, pageSize, pageGutter) {
 
 exports.index = function (req, res) {
     var params = {
+        isGravatar: true,
         gravatar: '',// get gravatar image if exist (use request by user email)
         list: [],
         type: req.param('t'),
@@ -30,6 +33,16 @@ exports.index = function (req, res) {
     };
     var listType = (params.type || 'all');
     var orderType = (params.order || 'by_updated_at');
+
+    params.gravatar = Common.getGravatar({ email: req.user.email || '', default: 'mm', size: '80'});
+
+/*
+    request(params.gravatar, function (error, response, body) {
+        if (body.length < 20) {
+            params.isGravatar = false;
+        }
+    });
+*/
 
     var couch = nano.db.use(req.user.haroo_id);
 
