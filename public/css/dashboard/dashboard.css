@@ -11,7 +11,9 @@ a {
 #layout,
 #nav,
 #list,
-#main {
+#main,
+#content-wrapper {
+  background: #ffffff;
   margin: 0;
   padding: 0;
 }
@@ -188,6 +190,17 @@ a {
   padding: 0.4em 1.6em;
   font-size: 80%;
 }
+/* Public Content */
+.public-content-wrapper {
+  background: #ebebeb;
+}
+.public-content {
+  margin: 0 1.5em;
+}
+.public-content .public-content-body {
+  margin: 1em auto;
+  max-width: 720px;
+}
 /*
  * TABLET (AND UP) MEDIA QUERIES
  */
@@ -235,6 +248,9 @@ a {
   .haroonote-content-controls .download {
     display: inline;
   }
+  #content-wrapper {
+    margin: 0 1em;
+  }
 }
 /*
  * DESKTOP (AND UP) MEDIA QUERIES
@@ -267,5 +283,8 @@ a {
     position: static;
     margin: 0;
     padding: 0;
+  }
+  #content-wrapper {
+    margin: 0 2em;
   }
 }

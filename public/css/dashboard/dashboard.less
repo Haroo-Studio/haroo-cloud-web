@@ -11,7 +11,8 @@ a {
  * DEFAULT (MOBILE) LAYOUT
  */
 
-#layout, #nav, #list, #main {
+#layout, #nav, #list, #main, #content-wrapper {
+  background: #ffffff;
   margin: 0;
   padding: 0;
 }
@@ -204,6 +205,21 @@ a {
   font-size: 80%;
 }
 
+
+/* Public Content */
+.public-content-wrapper {
+  background: #ebebeb;
+}
+
+.public-content {
+  margin: 0 1.5em;
+  .public-content-body {
+    margin: 1em auto;
+    max-width: 720px;
+  }
+}
+
+
 /*
  * TABLET (AND UP) MEDIA QUERIES
  */
@@ -252,6 +268,10 @@ a {
     }
     text-align: right;
   }
+
+  #content-wrapper {
+    margin: 0 1em;
+  }
 }
 
 /*
@@ -288,6 +308,10 @@ a {
     position: static;
     margin: 0;
     padding: 0;
+  }
+
+  #content-wrapper {
+    margin: 0 2em;
   }
 }
 
