@@ -201,6 +201,20 @@ a {
   margin: 1em auto;
   max-width: 720px;
 }
+.public-content-toc {
+  background: #fafafa;
+  position: static;
+  width: 100%;
+  border: 1px solid #b1b2bf;
+  margin: 1em;
+}
+.public-content-toc .close-icon {
+  display: none;
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  cursor: pointer;
+}
 /*
  * TABLET (AND UP) MEDIA QUERIES
  */
@@ -251,6 +265,16 @@ a {
   #content-wrapper {
     margin: 0 1em;
   }
+  .public-content-toc {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 15em;
+    margin-right: 2em;
+  }
+  .public-content-toc .close-icon {
+    display: block;
+  }
 }
 /*
  * DESKTOP (AND UP) MEDIA QUERIES
@@ -286,5 +310,12 @@ a {
   }
   #content-wrapper {
     margin: 0 2em;
+  }
+  .public-content-toc {
+    position: fixed;
+    right: 0;
+    top: 1em;
+    width: 20em;
+    margin-right: 4em;
   }
 }

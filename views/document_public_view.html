@@ -22,10 +22,18 @@
     </div>
     <div class="pure-u-1 public-content-toc">
         {{ doc['toc'].html | safe }}
+        <div class="close-icon"><i class="fa fa-close"></i></div>
     </div>
 
 </div>
-
+<script src="/components/jquery/dist/jquery.min.js"></script>
+<script>
+    $('document').ready(function () {
+        $('#content-wrapper').find('.public-content-toc .close-icon').one('click', function () {
+            $(this).parent().hide();
+        });
+    });
+</script>
 <!-- End Page Wrapper -->
 </body>
 </html>
