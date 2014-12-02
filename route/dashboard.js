@@ -24,7 +24,7 @@ function getPageParams (totalCount, nowPage, pageSize, pageGutter) {
 exports.index = function (req, res) {
     var params = {
         isGravatar: true,
-        gravatar: '',// get gravatar image if exist (use request by user email)
+        gravatar: Common.getGravatar({ email: req.user.email || '', default: 'mm', size: '80'}),
         list: [],
         type: req.param('t'),
         page: req.param('p') || 1,
@@ -33,8 +33,6 @@ exports.index = function (req, res) {
     };
     var listType = (params.type || 'all');
     var orderType = (params.order || 'by_updated_at');
-
-    params.gravatar = Common.getGravatar({ email: req.user.email || '', default: 'mm', size: '80'});
 
 /*
     request(params.gravatar, function (error, response, body) {
@@ -103,7 +101,6 @@ exports.documentUpdatePublic = function (req, res) {
     var couch = nano.db.use(params['haroo_id']);
 
     Document.togglePublic(couch, params, function (result) {
-        console.log(result);
         res.send(result);
     });
 };
@@ -123,5 +120,21 @@ exports.documentPublicView = function (req, res) {
         } else {
             res.status(500).send('NOTHING TO SHOW, PLEASE USE CORRECT PUBLIC URL');
         }
+    });
+};
+
+exports.documentUpdateImportant = function (req, res) {
+    var params = {
+        haroo_id: req.user.haroo_id,
+        document_id: req.param('document_id')
+    };
+
+    if (!params.haroo_id) return res.send({ ok: false });
+    if (!params.document_id) return res.send({ ok: false });
+
+    var couch = nano.db.use(params['haroo_id']);
+
+    Document.toggleImportant(couch, params, function (result) {
+        res.send(result);
     });
 };

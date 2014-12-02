@@ -233,6 +233,7 @@ app.get('/account/unlink/:provider', accountController.unlinkAccount);
 app.get('/dashboard',  dashboardController.index);
 app.get('/dashboard/:document_id', dashboardController.documentView);
 app.post('/dashboard/:document_id/public', dashboardController.documentUpdatePublic);
+app.post('/dashboard/:document_id/important', dashboardController.documentUpdateImportant);
 app.post('/test', function (req, res) {
     console.log(req.body);
     res.send({ok: true, public: true});

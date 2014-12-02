@@ -44,6 +44,13 @@ var dashboard = {
 
 var dashboardViewCtrl = {
     token: '',
+    toggleImportant: function (viewID, callback) {
+        $.post('/dashboard/' + viewID + '/important', {_csrf: this.token}, function (result) {
+            if (result.code) {
+                callback(result.important);
+            }
+        });
+    },
     togglePublic: function (viewID, callback) {
         $.post('/dashboard/' + viewID + '/public', {_csrf: this.token}, function (result) {
             if (result.code) {
@@ -120,8 +127,8 @@ $('document').ready(function () {
     viewControl.on('click', toggleStr.imp, function (e) {
         var that = $(this);
         var viewID = that.parent().data('id') || '';
-        dashboardViewCtrl.togglePublic(viewID, function (isPublic) {
-            dashboardViewCtrl.toggleAction(that, isPublic);
+        dashboardViewCtrl.toggleImportant(viewID, function (isImportant) {
+            dashboardViewCtrl.toggleAction(that, isImportant);
         });
     });
     viewControl.on('click', toggleStr.pub, function (e) {
