@@ -77,12 +77,14 @@ var dashboardViewCtrl = {
 };
 
 $('document').ready(function () {
+    var $nav = $('#nav'), $list = $('#list'), $main = $('#main');
+
     dashboard.init($('.haroonote-item'), $('.haroonote-content'));
-    dashboard.id_max = $('#nav').find('ul.category-menu').data('id');
+    dashboard.id_max = $nav.find('ul.category-menu').data('id');
 
     // responsive controls
     $('.nav-menu-button').on('click', function (e) {
-        $('#nav').toggleClass('active');
+        $nav.toggleClass('active');
     });
     
     // bind keyboard
@@ -107,22 +109,30 @@ $('document').ready(function () {
     });
 
     // document view control
-    $('#list').on('click', '.haroonote-item', function (e) {
+    $list.on('click', '.haroonote-item', function (e) {
         var bindID = $(this).data('id');
         dashboard.changeDocument(bindID);
         $('html,body').stop().animate({scrollTop: 0}, 500);
     });
 
+    // ad button
+    if ($.cookie('remove-premium-box') == 1) {
+        $list.find('.go-premium').parent().hide();
+    }
+    $list.find('.go-premium .close-icon').one('click', function () {
+        $(this).parent().parent().hide();
+        $.cookie('remove-premium-box', '1', { expires: 7, path: '/' });
+    });
+
     // document meta control
-    var main = $('#main');
-    var viewControl = main.children().find('.haroonote-content-controls');
+    var viewControl = $main.children().find('.haroonote-content-controls');
     var toggleStr = {
         imp: '.important',
         pub: '.public',
         dwn: '.download'
     };
 
-    dashboardViewCtrl.token = main.data('id');
+    dashboardViewCtrl.token = $main.data('id');
 
     viewControl.on('click', toggleStr.imp, function (e) {
         var that = $(this);
