@@ -52,6 +52,8 @@ a {
 #nav .nav-menu-avatar img {
   width: 24px;
   height: 24px;
+  border-radius: 4px;
+  background: #252519;
 }
 #nav .nav-profile {
   padding: 1em;
@@ -132,14 +134,6 @@ a {
   border-bottom: none;
   font-size: 0.9em;
   color: #4b7197;
-}
-.email-avatar {
-  border-radius: 3px;
-  margin-right: 0.5em;
-}
-.email-avatar {
-  width: 40px;
-  height: 40px;
 }
 /* List Style */
 .haroonote-item {
@@ -226,8 +220,7 @@ a {
   background: #fff;
   border: 1px solid #ddd;
   color: #666;
-  padding: 0.4em 1.6em;
-  font-size: 80%;
+  padding: 0.4em 1.4em;
 }
 /* Public Content */
 .public-content-wrapper {
@@ -297,8 +290,9 @@ a {
     margin-top: 2em;
   }
   #nav .nav-menu-avatar img {
-    width: 48px;
-    height: 48px;
+    width: 80px;
+    height: 80px;
+    border-radius: 6px;
   }
   #nav .nav-menu-button {
     display: none;
@@ -313,6 +307,7 @@ a {
   }
   .haroonote-content-controls {
     text-align: right;
+    font-size: 0.8em;
   }
   .haroonote-content-controls .important {
     display: inline;
