@@ -83,10 +83,14 @@ $('document').ready(function () {
     dashboard.id_max = $nav.find('ul.category-menu').data('id');
 
     // responsive controls
-    $('.nav-menu-button').on('click', function (e) {
+    $nav.find('.nav-menu-button').on('click', function (e) {
         $nav.toggleClass('active');
     });
-    
+
+    $nav.find('.nav-footer').on('click', '.footer-head', function (e) {
+
+        $nav.find('.nav-footer .footer-content').toggle();
+    });
     // bind keyboard
     keymage.setScope('dashboard.list');
     keymage('dashboard.list', 's', function () {

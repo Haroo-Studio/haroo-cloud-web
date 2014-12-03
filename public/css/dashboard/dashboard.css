@@ -17,6 +17,10 @@ a {
   margin: 0;
   padding: 0;
 }
+.position-holder {
+  display: none;
+  position: relative;
+}
 /* Nav Style */
 #nav {
   width: 100%;
@@ -49,6 +53,13 @@ a {
   width: 24px;
   height: 24px;
 }
+#nav .nav-profile {
+  padding: 1em;
+  font-size: 0.8em;
+}
+#nav .nav-profile p {
+  margin: 4px;
+}
 #nav .nav-inner {
   display: none;
 }
@@ -58,6 +69,34 @@ a {
   border-radius: 4px;
   font-size: 0.85em;
   color: #2e7ebf;
+}
+#nav .nav-footer {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  color: #fcfcfc;
+  background: #1f1d1d;
+  border-top: solid 2px #343131;
+  font-size: 0.8em;
+}
+#nav .nav-footer .footer-head {
+  cursor: pointer;
+  padding: 0.2em;
+  background: #353232;
+  font-size: 0.8em;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+#nav .nav-footer .footer-head p {
+  margin: 5px;
+}
+#nav .nav-footer .footer-head i {
+  margin-left: 0.1em;
+}
+#nav .nav-footer .footer-content {
+  display: none;
 }
 #nav.active {
   height: 80%;
@@ -232,6 +271,9 @@ a {
  * TABLET (AND UP) MEDIA QUERIES
  */
 @media (min-width: 40em) {
+  .position-holder {
+    display: block;
+  }
   #layout {
     padding-left: 150px;
     position: relative;
@@ -260,6 +302,9 @@ a {
   }
   #nav .nav-menu-button {
     display: none;
+  }
+  #nav .nav-footer {
+    display: block;
   }
   .haroonote-content-header,
   .haroonote-content-body,
