@@ -97,7 +97,8 @@ exports.login = function(req, res) {
                     return res.redirect('/login');
                 } else {
                     AccountLog.login({email: req.param('email')});
-                    return res.redirect(String(req.session.returnTo) || '/dashboard');
+                    console.log(req.session && req.session.returnTo ? req.session.returnTo : 'nothing to return');
+                    return res.redirect((req.session && req.session.returnTo && req.session.returnTo != undefined) ? req.session.returnTo : '/dashboard');
                 }
             });
         }
