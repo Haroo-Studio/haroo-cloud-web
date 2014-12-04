@@ -72,6 +72,7 @@ exports.index = function (req, res) {
         });
 };
 
+/*
 exports.documentView = function (req, res) {
     var params = {
         user_id: req.user.uid,
@@ -88,6 +89,7 @@ exports.documentView = function (req, res) {
         }
     });
 };
+*/
 
 exports.documentUpdatePublic = function (req, res) {
     var params = {
