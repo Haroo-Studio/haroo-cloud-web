@@ -1,0 +1,43 @@
+/*
+ * DESKTOP (AND UP) MEDIA QUERIES
+ */
+@media (min-width: 60em) {
+  #layout {
+    padding-left: 500px;
+    position: relative;
+  }
+  #nav,
+  #list {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  #nav {
+    margin-left: -500px;
+    width: 150px;
+    height: 100%;
+  }
+  #list {
+    left: 150px;
+    width: 350px;
+    height: 100%;
+    border-right: 1px solid #ddd;
+  }
+  #main {
+    position: static;
+    margin: 0;
+    padding: 0;
+  }
+  #content-wrapper {
+    margin: 0 2em;
+  }
+  .public-content-toc {
+    position: fixed;
+    right: 0;
+    top: 1em;
+    width: 20em;
+    margin-right: 4em;
+  }
+}

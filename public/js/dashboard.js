@@ -83,14 +83,25 @@ $('document').ready(function () {
     dashboard.id_max = $nav.find('ul.category-menu').data('id');
 
     // responsive controls
-    $nav.find('.nav-menu-button').on('click', function (e) {
+    $nav.find('.nav-menu-button').on('click', function () {
         $nav.toggleClass('active');
     });
 
-    $nav.find('.nav-footer').on('click', '.footer-head', function (e) {
+    $nav.find('.nav-footer').on('click', '.footer-head', function () {
 
         $nav.find('.nav-footer .footer-content').toggle();
     });
+
+    // preference panel
+    $nav.on('click', '.preference-button', function () {
+        var $preference = $('#preference');
+
+        $preference.toggle();
+        $preference.one('click', function () {
+            $preference.hide();
+        });
+    });
+
     // bind keyboard
     keymage.setScope('dashboard.list');
     keymage('dashboard.list', 's', function () {
@@ -113,7 +124,7 @@ $('document').ready(function () {
     });
 
     // document view control
-    $list.on('click', '.haroonote-item', function (e) {
+    $list.on('click', '.haroonote-item', function () {
         var bindID = $(this).data('id');
         dashboard.changeDocument(bindID);
         $('html,body').stop().animate({scrollTop: 0}, 500);
@@ -138,14 +149,14 @@ $('document').ready(function () {
 
     dashboardViewCtrl.token = $main.data('id');
 
-    viewControl.on('click', toggleStr.imp, function (e) {
+    viewControl.on('click', toggleStr.imp, function () {
         var that = $(this);
         var viewID = that.parent().data('id') || '';
         dashboardViewCtrl.toggleImportant(viewID, function (isImportant) {
             dashboardViewCtrl.toggleAction(that, isImportant);
         });
     });
-    viewControl.on('click', toggleStr.pub, function (e) {
+    viewControl.on('click', toggleStr.pub, function () {
         var that = $(this);
         var viewID = that.parent().data('id') || '';
         dashboardViewCtrl.togglePublic(viewID, function (isPublic, shareUrl) {
@@ -153,7 +164,7 @@ $('document').ready(function () {
             dashboardViewCtrl.toggleLink(that.siblings('a.link'), shareUrl)
         });
     });
-    viewControl.on('click', toggleStr.dwn, function (e) {
+    viewControl.on('click', toggleStr.dwn, function () {
         var that = $(this);
         var viewID = that.parent().data('id') || '';
         dashboardViewCtrl.togglePublic(viewID, function (isPublic) {

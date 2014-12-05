@@ -275,7 +275,7 @@ a {
 #preference .panel {
   position: absolute;
   width: 28em;
-  max-height: 40em;
+  max-height: 42em;
   height: 90%;
   top: 32px;
   left: 0;
@@ -296,7 +296,7 @@ a {
   background: #008080;
   font-size: 0.8em;
   color: #FFFFFF;
-  padding: 3px 6px 3px 3px;
+  padding: 4px 6px 4px 3px;
   margin-right: 0.5em;
   text-align: right;
 }
@@ -308,8 +308,20 @@ a {
   color: #757575;
   margin-left: 0.5em;
 }
+#preference .pure-form-aligned .account-info .unlink {
+  font-size: 0.8em;
+  margin: 0.5em 0.5em 0.5em 9.4em;
+}
+#preference .pure-form-aligned .account-info .unlink a {
+  text-align: left;
+}
 #preference .pure-form-aligned .pure-controls {
   margin-left: 7.65em;
+  margin-bottom: 1.5em;
+}
+#preference .pure-form-aligned .pure-controls button {
+  font-size: 0.9em;
+  padding: 6px 10px;
 }
 #preference .hero {
   text-align: center;
@@ -427,9 +439,6 @@ a {
     margin-right: 2em;
   }
   .public-content-toc .close-icon {
-    display: block;
-  }
-  #preference {
     display: block;
   }
 }

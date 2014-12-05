@@ -1,6 +1,5 @@
 <div id="preference">
     <div class="panel">
-
         <div class="hero">
             <div class="hero-titles">
                 <h2>Preference</h2>
@@ -9,6 +8,25 @@
         <div class="pure-form pure-form-aligned">
             <div class="account-info">
                 <p class="email"><span class="label">Account</span> {{ user.email }}</p>
+                <div class="external-auth">
+                    <div class="unlink">
+                        <a href="/account/unlink/github" class="pure-button pure-u-2-3">Unlink for <i class="fa fa-github"></i> Github</a>
+                    </div>
+                    <div class="unlink">
+                        <a href="/account/unlink/facebook" class="pure-button pure-u-2-3">Unlink for <i class="fa fa-facebook"></i> Facebook</a>
+                    </div>
+                    <div class="unlink">
+                        <a href="/account/unlink/google" class="pure-button pure-u-2-3">Unlink for <i class="fa fa-google"></i> Google</a>
+                    </div>
+                    <div class="unlink">
+                        <a href="/account/unlink/twitter" class="pure-button pure-u-2-3">Unlink for <i class="fa fa-twitter"></i> Twitter</a>
+                    </div>
+                    {% for item in user.tokens %}
+                    <div class="unlink">
+                        <a class="pure-button pure-u-2-3" href="/account/unlink/{{ item.kind }}">Unlink for <i class="fa fa-{{ item.kind|lower }}"></i> {{ item.kind|upper }}</a>
+                    </div>
+                    {% endfor %}
+                </div>
                 <p class="registered"><span class="label">Registered At</span> {{ user.created_at|date('Y-m-d') }}</p>
                 <p class="subscription"><span class="label">Subscribe Type</span> Free Account <span class="quota">{{ '4,483' + 'kB' }} / {{ '5,000' + 'kB' }}</span></p>
             </div>
@@ -58,10 +76,10 @@
         <div class="pure-form pure-form-aligned">
             <div class="account-update">
                 <p class="nickname"><span class="label">Nickname</span>
-                    <input id="name" type="text" placeholder="Username">
+                    <input id="name" type="text" placeholder="Screen name" maxlength="50" value="{{ user.profile.nickname }}">
                 </p>
                 <p class="password"><span class="label">Password</span>
-                    <input id="password" type="password" placeholder="Password">
+                    <input id="password" type="password" placeholder="Password" maxlength="50">
                 </p>
             </div>
 

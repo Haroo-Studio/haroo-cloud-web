@@ -292,7 +292,7 @@ a {
   .panel {
     position: absolute;
     width: 28em;
-    max-height: 40em;
+    max-height: 42em;
     height: 90%;
     top: 32px;
     left: 0;
@@ -314,7 +314,7 @@ a {
       background: #008080;
       font-size: 0.8em;
       color: #FFFFFF;
-      padding: 3px 6px 3px 3px;
+      padding: 4px 6px 4px 3px;
       margin-right: 0.5em;
       text-align: right;
     }
@@ -327,9 +327,21 @@ a {
         color: #757575;
         margin-left: 0.5em;
       }
+      .unlink {
+        a {
+          text-align: left;
+        }
+        font-size: 0.8em;
+        margin: 0.5em 0.5em 0.5em 9.4em;
+      }
     }
     .pure-controls {
       margin-left: 7.65em;
+      margin-bottom: 1.5em;
+      button {
+        font-size: 0.9em;
+        padding: 6px 10px;
+      }
     }
   }
   .hero {
@@ -380,8 +392,6 @@ a {
     }
   }
 }
-
-
 
 @import "dashboard-tablet";
 @import "dashboard-desktop";
