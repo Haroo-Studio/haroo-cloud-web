@@ -1,93 +1,74 @@
-<!--todo: modal popup -->
+<div id="preference">
+    <div class="panel">
 
-    <div id="preference" class="pure-u-1">
         <div class="hero">
             <div class="hero-titles">
-                <h2 class="hero-tagline">HarooCloud, World Best Markdown Integration Platform</h2>
+                <h2>Preference</h2>
             </div>
         </div>
-        {% include 'partials/flash-message.html' %}
         <div class="pure-form pure-form-aligned">
-            <div class="pure-control-group">
-                <span>Username</span>
+            <div class="account-info">
+                <p class="email"><span class="label">Account</span> {{ user.email }}</p>
+                <p class="registered"><span class="label">Registered At</span> {{ user.created_at|date('Y-m-d') }}</p>
+                <p class="subscription"><span class="label">Subscribe Type</span> Free Account <span class="quota">{{ '4,483' + 'kB' }} / {{ '5,000' + 'kB' }}</span></p>
             </div>
-
         </div>
 
         <div class="size-chart pure-g">
-
-            <div class="size-chart-note pure-u" style="width: 20.9007%;">
-                <a class="size-chart-item" href="/base/">
-                <span class="size-chart-label">
-                    <span class="size-chart-mod">base</span>
-                    <span class="size-chart-size">1.2KB</span>
-                </span>
+            <div class="size-chart-note pure-u" style="width: 23%;">
+                <a class="size-chart-item" href="/dashboard?t=note">
+                    <span class="size-chart-label"><span class="size-chart-mod">Note</span> <span class="size-chart-size">1.2MB</span></span>
                 </a>
             </div>
 
-            <div class="size-chart-todo pure-u" style="width: 13.7083%;">
-                <a class="size-chart-item" href="/grids/">
-                <span class="size-chart-label">
-                    <span class="size-chart-mod">grids</span>
-                    <span class="size-chart-size">0.8KB</span>
-                </span>
+            <div class="size-chart-todo pure-u" style="width: 13%;">
+                <a class="size-chart-item" href="/dashboard?t=note">
+                    <span class="size-chart-label"><span class="size-chart-mod">Presentation</span> <span class="size-chart-size">0.8MB</span></span>
                 </a>
             </div>
 
-            <div class="size-chart-presentation pure-u" style="width: 24.1669%;">
-                <a class="size-chart-item" href="/forms/">
-                <span class="size-chart-label">
-                    <span class="size-chart-mod">forms</span>
-                    <span class="size-chart-size">1.4KB</span>
-                </span>
+            <div class="size-chart-presentation pure-u" style="width: 24%;">
+                <a class="size-chart-item" href="/dashboard?t=image">
+                    <span class="size-chart-label"><span class="size-chart-mod">Image</span> <span class="size-chart-size">1.4MB</span></span>
                 </a>
             </div>
 
-            <div class="size-chart-mail pure-u" style="width: 13.1805%;">
-                <a class="size-chart-item" href="/buttons/">
-                <span class="size-chart-label">
-                    <span class="size-chart-mod">buttons</span>
-                    <span class="size-chart-size">0.8KB</span>
-                </span>
+            <div class="size-chart-mail pure-u" style="width: 13%;">
+                <a class="size-chart-item" href="/dashboard?t=mail">
+                    <span class="size-chart-label"><span class="size-chart-mod">Mail</span> <span class="size-chart-size">0.8MB</span></span>
                 </a>
             </div>
 
-            <div class="size-chart-tags pure-u" style="width: 8.1821%;">
-                <a class="size-chart-item" href="/tables/">
-                <span class="size-chart-label">
-                    <span class="size-chart-mod">tables</span>
-                    <span class="size-chart-size">0.5KB</span>
-                </span>
+            <div class="size-chart-tags pure-u" style="width: 8%;">
+                <a class="size-chart-item" href="/dashboard?t=tag">
+                    <span class="size-chart-label"><span class="size-chart-mod">Tag</span> <span class="size-chart-size">0.5MB</span></span>
                 </a>
             </div>
 
-            <div class="size-chart-trash pure-u" style="width: 19.8614%;">
-                <a class="size-chart-item" href="/menus/">
-                <span class="size-chart-label">
-                    <span class="size-chart-mod">menus</span>
-                    <span class="size-chart-size">1.2KB</span>
-                </span>
+            <div class="size-chart-trash pure-u" style="width: 19%;">
+                <a class="size-chart-item" href="/dashboard?t=trash">
+                    <span class="size-chart-label"><span class="size-chart-mod">Trash</span> <span class="size-chart-size">1.2MB</span></span>
                 </a>
             </div>
-
         </div>
 
-
-        <form class="pure-form pure-form-aligned">
-            <fieldset>
-                <div class="pure-control-group">
-                    <label for="name">Nickname</label>
+        <div class="hero">
+            <h4>Update Account Profile</h4>
+        </div>
+        <div class="pure-form pure-form-aligned">
+            <div class="account-update">
+                <p class="nickname"><span class="label">Nickname</span>
                     <input id="name" type="text" placeholder="Username">
-                </div>
-                <div class="pure-control-group">
-                    <label for="password">Password</label>
+                </p>
+                <p class="password"><span class="label">Password</span>
                     <input id="password" type="password" placeholder="Password">
-                </div>
-                <div class="pure-controls">
-                    <button type="submit" class="pure-button pure-button-primary">Submit</button>
-                </div>
-            </fieldset>
-        </form>
+                </p>
+            </div>
 
+            <div class="pure-controls">
+                <button type="submit" class="pure-button pure-button-primary">Update</button>
+            </div>
+        </div>
     </div>
+</div>
 
