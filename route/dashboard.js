@@ -72,24 +72,10 @@ exports.index = function (req, res) {
         });
 };
 
-/*
-exports.documentView = function (req, res) {
-    var params = {
-        user_id: req.user.uid,
-        document_id: req.param('document_id')
-    };
-    var couch = nano.db.use(req.user.haroo_id);
+exports.updatePreference = function (req, res) {
+    // todo: update user preference to mongo
 
-    couch.get(params.document_id, function (err, doc) {
-        params.doc = doc;
-        if (!err) {
-            res.render('document_view', params);
-        } else {
-            res.status(500).send('Something broken!');
-        }
-    });
 };
-*/
 
 exports.documentUpdatePublic = function (req, res) {
     var params = {

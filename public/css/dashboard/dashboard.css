@@ -56,6 +56,7 @@ a {
   background: #252519;
 }
 #nav .nav-profile {
+  display: none;
   padding: 1em;
   font-size: 0.8em;
 }
@@ -66,7 +67,7 @@ a {
   display: none;
 }
 #nav .item-count {
-  padding: 3px 5px;
+  padding: 3px 4px;
   background: #d0d0d0;
   border-radius: 4px;
   font-size: 0.85em;
@@ -117,10 +118,10 @@ a {
 }
 #nav .pure-menu.pure-menu-open i {
   text-align: center;
-  width: 1.2em;
+  width: 1.1em;
 }
 #nav .pure-menu.pure-menu-open li a {
-  padding-left: 10px;
+  padding-left: 5px;
 }
 #nav .pure-menu a:hover,
 #nav .pure-menu a:focus {
@@ -260,6 +261,65 @@ a {
   right: 4px;
   cursor: pointer;
 }
+/* Preference */
+#preference {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #FFFFFF;
+}
+#preference .hero {
+  text-align: center;
+  border-bottom: 1px solid #c5c5c5;
+  margin-bottom: 1em;
+}
+#preference .hero .hero-title {
+  padding: 0 2em;
+  margin: 2em auto;
+  max-width: 768px;
+}
+#preference .hero .hero-tagline {
+  font-size: 150%;
+  font-weight: 200;
+  line-height: 1.5;
+  margin: 1em;
+  color: #666;
+}
+#preference .size-chart {
+  width: 100%;
+  font-size: 0.9em;
+  line-height: 1.4;
+  margin-bottom: 2em;
+}
+#preference .size-chart .size-chart-note {
+  background: #1f8dd6;
+}
+#preference .size-chart .size-chart-todo {
+  background: #8058a5;
+}
+#preference .size-chart .size-chart-presentation {
+  background: #5eb95e;
+}
+#preference .size-chart .size-chart-mail {
+  background: #dd514c;
+}
+#preference .size-chart .size-chart-tags {
+  background: #f37b1d;
+}
+#preference .size-chart .size-chart-trash {
+  background: #fad232;
+}
+#preference .size-chart .size-chart-item {
+  display: block;
+  color: #fff;
+  padding: 1.45em 0;
+  text-align: center;
+  text-decoration: none;
+  text-transform: capitalize;
+}
+#preference .size-chart .size-chart-item .size-chart-label {
+  display: inline-block;
+}
 /*
  * TABLET (AND UP) MEDIA QUERIES
  */
@@ -279,6 +339,9 @@ a {
     margin-left: -150px;
     width: 150px;
     height: 100%;
+  }
+  #nav .nav-profile {
+    display: block;
   }
   #nav .nav-inner {
     display: block;

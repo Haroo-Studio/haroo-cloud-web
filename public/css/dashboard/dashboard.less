@@ -56,6 +56,7 @@ a {
     }
   }
   .nav-profile {
+    display: none;
     padding: 1em;
     font-size: 0.8em;
     p {
@@ -66,7 +67,7 @@ a {
     display: none;
   }
   .item-count {
-    padding: 3px 5px;
+    padding: 3px 4px;
     background: #d0d0d0;
     border-radius: 4px;
     font-size: 0.85em;
@@ -121,11 +122,11 @@ a {
   text-align: left;
   i {
     text-align: center;
-    width: 1.2em;
+    width: 1.1em;
   }
   li {
     a {
-      padding-left: 10px;
+      padding-left: 5px;
     }
   }
 }
@@ -278,125 +279,71 @@ a {
   }
 }
 
-/*
- * TABLET (AND UP) MEDIA QUERIES
- */
-@media (min-width: 40em) {
-  .position-holder {
-    display: block;
-  }
+/* Preference */
+#preference {
+  
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #FFFFFF;
 
-  #layout {
-    padding-left:150px;
-    position: relative;
-  }
-
-  #nav {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    overflow: auto;
-    margin-left:-150px;
-    width:150px;
-    height: 100%;
-    .nav-inner {
-      display: block;
-      padding: 2em 0;
+  .hero {
+    text-align: center;
+    border-bottom: 1px solid #c5c5c5;
+    margin-bottom: 1em;
+    .hero-title {
+      padding: 0 2em;
+      margin: 2em auto;
+      max-width: 768px;
     }
-    .nav-menu-avatar {
+    .hero-tagline {
+      font-size: 150%;
+      font-weight: 200;
+      line-height: 1.5;
+      margin: 1em;
+      color: #666;
+    }
+  }
+
+
+  .size-chart {
+    width: 100%;
+    font-size: 0.9em;
+    line-height: 1.4;
+    margin-bottom: 2em;
+    .size-chart-note {
+      background: #1f8dd6;
+    }
+    .size-chart-todo {
+      background: rgb(128, 88, 165);
+    }
+    .size-chart-presentation {
+      background: #5eb95e;
+    }
+    .size-chart-mail {
+      background: #dd514c;
+    }
+    .size-chart-tags {
+      background: rgb(243, 123, 29);
+    }
+    .size-chart-trash {
+      background: rgb(250, 210, 50);
+    }
+    .size-chart-item {
       display: block;
-      position: static;
-      margin-top: 2em;
-      img {
-        width: 80px;
-        height: 80px;
-        border-radius: 6px;
+      color: #fff;
+      padding: 1.45em 0;
+      text-align: center;
+      text-decoration: none;
+      text-transform: capitalize;
+      .size-chart-label {
+        display: inline-block;
       }
     }
-    .nav-menu-button {
-      display: none;
-    }
-    .nav-footer {
-      display: block;
-    }
-  }
-
-  .haroonote-content-header, .haroonote-content-body, .email-content-footer {
-    padding: 1em 1.5em;
-  }
-  .haroonote-content-controls {
-    .important {
-      display: inline;
-    }
-    .download {
-      display: inline;
-    }
-    text-align: right;
-    font-size: 0.8em;
-  }
-
-  #content-wrapper {
-    margin: 0 1em;
-  }
-
-  .public-content-toc {
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 15em;
-    margin-right: 2em;
-    .close-icon {
-      display: block;
-    }
   }
 }
 
-/*
- * DESKTOP (AND UP) MEDIA QUERIES
- */
-@media (min-width: 60em) {
-  #layout {
-    padding-left: 500px;
-    position: relative;
-  }
 
-  #nav, #list {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-  }
 
-  #nav {
-    margin-left: -500px;
-    width: 150px;
-    height: 100%;
-  }
-
-  #list {
-    left: 150px;
-    width:350px;
-    height: 100%;
-    border-right: 1px solid #ddd;
-  }
-
-  #main {
-    position: static;
-    margin: 0;
-    padding: 0;
-  }
-
-  #content-wrapper {
-    margin: 0 2em;
-  }
-
-  .public-content-toc {
-    position: fixed;
-    right: 0;
-    top: 1em;
-    width: 20em;
-    margin-right: 4em;
-  }
-}
-
+@import "dashboard-tablet";
+@import "dashboard-desktop";
