@@ -33,7 +33,7 @@ var Pipe = require('pipe');
 var Passport = Pipe.Passport;
 
 Pipe.MongoInit(database);
-Pipe.PassportConfig(passport);
+Pipe.PassportConfig(passport, database);
 
 // Route Controller
 var dashboardController = require('./route/dashboard');

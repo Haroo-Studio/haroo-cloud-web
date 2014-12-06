@@ -55,9 +55,21 @@
         </div>
     </div>
     <div id="main" class="pure-u-1" data-id="{{ _csrf }}">
+        {% if list.length %}
         {% for item in list %}
         {% include 'partials/dashboard_view.html' with item %}
         {% endfor %}
+        {% else %}
+        <div class="haroonote-content-no-data">
+            <div class="haroonote-content-header pure-g">
+                <div class="pure-u-1">
+                    <h2>No data exist</h2>
+                    <p>Please use haroonote for your content creation</p>
+                    <a href="/download" class="pure-button secondary-button pure-button-active">Download</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
     <div id="list" class="pure-u-1">
         <div class="pure-g position-holder">
