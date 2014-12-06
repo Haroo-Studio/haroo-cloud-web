@@ -28,6 +28,7 @@ exports.isAuthorized = function(req, res, callback) {
     }
 };
 
+// Link account with facebook, twitter, google, github(todo)
 exports.linkExternalAccount = function (req, res, next) {
     var provider = req.path.split('/')[2];
 
@@ -56,6 +57,33 @@ exports.linkExternalAccount = function (req, res, next) {
         });
     })(req, res, next);
 
+};
+
+// Unlink external account
+exports.unlinkExternalAccount = function (req, res) {
+    var params = {
+        user_id: req.user.id,
+        provider: req.param('provider')
+    };
+
+    Account.unlinkAccountByProvider(params, function (err, result) {
+        console.log(result);
+        req.flash('info', {msg: params.provider + ' account has been unlinked.'});
+        res.redirect('/dashboard');
+    });
+
+    //Account.findById(req.user.id, function(err, user) {
+    //    if (err) return next(err);
+    //
+    //    user[provider] = undefined;
+    //    user.tokens = _.reject(user.tokens, function(token) { return token.kind === provider; });
+    //
+    //    user.save(function(err) {
+    //        if (err) return next(err);
+    //        req.flash('info', { msg: provider + ' account has been unlinked.' });
+    //        res.redirect('/account');
+    //    });
+    //});
 };
 
 exports.logout = function(req, res) {
@@ -150,14 +178,6 @@ exports.signUp = function (req, res, next) {
     });
 };
 
-exports.accountInfo = function (req, res) {
-    var params = {
-        user: req.user||''
-    };
-
-    res.render('profile', params)
-};
-
 exports.updateProfile = function (req, res) {
     //req.assert('haroo_id', 'haroo_id must be at least 4 characters long').len(4);
 
@@ -228,6 +248,7 @@ exports.deleteAccount = function(req, res, next) {
     });
 };
 
+//deprecated
 exports.unlinkAccount = function(req, res, next) {
     var provider = req.param('provider');
     Account.findById(req.user.id, function(err, user) {

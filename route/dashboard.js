@@ -76,11 +76,6 @@ exports.index = function (req, res) {
         });
 };
 
-exports.updatePreference = function (req, res) {
-    // todo: update user preference to mongo
-
-};
-
 exports.documentUpdatePublic = function (req, res) {
     var params = {
         haroo_id: req.user.haroo_id,

@@ -224,14 +224,13 @@ app.get('/p/:date/:counter', dashboardController.documentPublicView);
 // restrict session
 app.use(accountController.isAuthenticated);
 
-app.get('/account', accountController.accountInfo);
 app.post('/account/profile', accountController.updateProfile);
 app.post('/account/password', accountController.updatePassword);
 app.post('/account/delete', accountController.deleteAccount);
-app.get('/account/unlink/:provider', accountController.unlinkAccount);
+
+app.get('/account/unlink/:provider', accountController.unlinkExternalAccount);
 
 app.get('/dashboard',  dashboardController.index);
-app.post('/dashboard/preference', dashboardController.updatePreference);
 app.post('/dashboard/:document_id/public', dashboardController.documentUpdatePublic);
 app.post('/dashboard/:document_id/important', dashboardController.documentUpdateImportant);
 app.post('/test', function (req, res) {
