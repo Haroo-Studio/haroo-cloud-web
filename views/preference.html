@@ -88,6 +88,18 @@
                 <button type="submit" class="pure-button pure-button-primary">Update</button>
             </div>
         </div>
+
+        <div class="pure-form pure-form-aligned">
+            <table class="pure-table token-list">
+                {% for item in tokenList -%}
+                <tr>
+                    <td>{{ item.access_ip }}</td>
+                    <td>{{ item.access_host }}</td>
+                    <td>{{ item.created_at|date('Y-m-d') }}</td>
+                </tr>
+                {%- endfor %}
+            </table>
+        </div>
     </div>
 </div>
 

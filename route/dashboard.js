@@ -6,6 +6,7 @@ var database = require('../config/database');
 
 var Common = Pipe.CommonUtil;
 var Document = Pipe.Document;
+var AccountToken = Pipe.AccountToken;
 var nano = Pipe.CouchConnect(database);
 
 function getPageParams (totalCount, nowPage, pageSize, pageGutter) {
@@ -23,6 +24,7 @@ function getPageParams (totalCount, nowPage, pageSize, pageGutter) {
 
 exports.index = function (req, res) {
     var params = {
+        haroo_id: req.user.haroo_id,
         isGravatar: true,
         gravatar: Common.getGravatar({ email: req.user.email || '', default: 'mm', size: '80'}),
         list: [],
@@ -42,7 +44,7 @@ exports.index = function (req, res) {
     });
 */
 
-    var couch = nano.db.use(req.user.haroo_id);
+    var couch = nano.db.use(params.haroo_id);
 
     async.parallel([
             function (callback) {
@@ -62,15 +64,28 @@ exports.index = function (req, res) {
                         callback(err);
                     }
                 });
+            },
+            function (callback) {
+                // get token info
+                AccountToken.listByHarooID({haroo_id: params.haroo_id}, function (result) {
+                    if (result['list']) {
+                        callback(null, result.list);
+                    } else {
+                        callback(result['msg']);
+                    }
+                });
             }],
         function (err, results) {
             if (err) {
-                console.error(err);
+                console.error('async: ', err);
                 res.render('dashboard', params);
             } else {
                 params.list = results[0].reverse();
                 params.tags = results[1].reverse();
+                params.tokenList = results[2];
+
                 params.page_param = getPageParams(Number(results[0].length), Number(params.page), Number(params.pageSize), Number(params.pageGutter));
+
                 res.render('dashboard', params);
             }
         });

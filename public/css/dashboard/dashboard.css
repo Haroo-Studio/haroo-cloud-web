@@ -299,6 +299,7 @@ a {
   border-bottom: 1px solid #909090;
   border-bottom-right-radius: 3px;
   border-top-right-radius: 3px;
+  padding-bottom: 1em;
 }
 #preference .pure-form-aligned {
   padding: 1em 1.8em 0;
@@ -344,6 +345,10 @@ a {
   padding: 0 2em;
   margin: 2em auto;
   max-width: 768px;
+}
+#preference .token-list {
+  width: 100%;
+  font-size: 0.8em;
 }
 #preference .size-chart {
   width: 100%;
