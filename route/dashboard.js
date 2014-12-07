@@ -68,8 +68,8 @@ exports.index = function (req, res) {
                 console.error(err);
                 res.render('dashboard', params);
             } else {
-                params.list = results[0] || results[0].length || results[0].reverse();
-                params.tags = results[1] || results[1].length || results[1].reverse();
+                params.list = results[0].reverse();
+                params.tags = results[1].reverse();
                 params.page_param = getPageParams(Number(results[0].length), Number(params.page), Number(params.pageSize), Number(params.pageGutter));
                 res.render('dashboard', params);
             }
