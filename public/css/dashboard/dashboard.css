@@ -173,6 +173,9 @@ a {
 .haroonote-content {
   display: none;
 }
+.haroonote-content img {
+  max-width: 100%;
+}
 .haroonote-content-header,
 .haroonote-content-body,
 .email-content-footer {
