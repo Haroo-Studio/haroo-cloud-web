@@ -238,6 +238,37 @@ p {
 .description-content .insert-image {
   max-width: 24em;
 }
+.alternative-content {
+  padding-top: 3em;
+}
+.alternative-content h2 {
+  font-weight: 100;
+  line-height: 1.5;
+  margin: 0;
+  color: #666;
+  letter-spacing: -0.02em;
+}
+.alternative-content .header {
+  max-width: 768px;
+  margin: 0 auto;
+  padding: 1em 2em;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  background: #fff;
+  letter-spacing: 0.05em;
+}
+.alternative-content .content {
+  max-width: 768px;
+  margin: 0 auto;
+  padding: 1em 2em;
+  text-align: center;
+}
+.alternative-content .graph-full {
+  padding: 1em 0;
+  border: 1px solid #eee;
+  color: #333;
+  background: #fafafa;
+}
 .footer-content {
   margin-top: 3em;
   border-top: 1px solid #eee;

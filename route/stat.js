@@ -1,7 +1,7 @@
 exports.document = function (req, res) {
-    res.send('document status');
+    res.render('stat/document');
 };
 
 exports.system = function (req, res) {
-    res.send('system report');
+    res.render('stat/system');
 };
