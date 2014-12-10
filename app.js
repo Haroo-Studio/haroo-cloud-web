@@ -38,6 +38,7 @@ Pipe.PassportConfig(passport, database);
 // Route Controller
 var dashboardController = require('./route/dashboard');
 var accountController = require('./route/account');
+var statController = require('./route/stat');
 
 // Start Body
 var app = express();
@@ -230,13 +231,12 @@ app.post('/account/delete', accountController.deleteAccount);
 
 app.get('/account/unlink/:provider', accountController.unlinkExternalAccount);
 
-app.get('/dashboard',  dashboardController.index);
+app.get('/dashboard', dashboardController.index);
 app.post('/dashboard/:document_id/public', dashboardController.documentUpdatePublic);
 app.post('/dashboard/:document_id/important', dashboardController.documentUpdateImportant);
-app.post('/test', function (req, res) {
-    console.log(req.body);
-    res.send({ok: true, public: true});
-});
+
+app.get('/stat/document', statController.document);
+app.get('/stat/system', statController.system);
 
 // 500 Error Handler
 app.use(errorHandler());
