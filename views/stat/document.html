@@ -11,6 +11,7 @@
     <link href="/components/pure/pure-min.css" rel="stylesheet">
     <link href="/components/pure/grids-responsive-min.css" rel="stylesheet">
     <link href="/components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/components/metrics-graphics/css/metricsgraphics.css" rel="stylesheet">
     <link href="/css/haroo-cloud.css" rel="stylesheet">
 </head>
 <body>
@@ -33,7 +34,7 @@
                         daily counted
                     </p>
                 </div>
-                <div class="graph-full">
+                <div class="graph-full" id="documents" data-id="{{ _csrf }}">
 
                 </div>
                 <div class="content">
@@ -60,6 +61,29 @@
     {% include '../partials/footer.html' %}
 </div>
 <script src="/components/jquery/dist/jquery.min.js"></script>
-<script src="/js/index.js"></script>
+<script src="/components/d3/d3.min.js"></script>
+<script src="/components/metrics-graphics/js/metricsgraphics.min.js"></script>
+<!--<script src="/js/stat.js"></script>-->
+<script>
+    $(document).ready(function () {
+        var $documents = $('#documents');
+        var graph_width = $documents.width();
+        var token = $documents.data('id');
+        $.post('/stat/document', {_csrf: token}, function (result) {
+            var data = result.data;
+            console.log('data', data);
+            data_graphic({
+                data: data,
+                width: graph_width,
+                height: 250,
+                target: '#documents',
+                markers: [{'year': 1994, 'label': '"alpha test" released.'}],
+                x_accessor: "year",
+                y_accessor: "sightings",
+                interpolate: "monotone"
+            });
+        });
+    });
+</script>
 </body>
 </html>

@@ -222,6 +222,11 @@ app.get('/auth/google/callback', accountController.linkExternalAccount);
 
 app.get('/p/:date/:counter', dashboardController.documentPublicView);
 
+app.get('/stat/document', statController.document);
+app.get('/stat/system', statController.system);
+app.post('/stat/document', statController.documentStat);
+app.post('/stat/system', statController.systemStat);
+
 // restrict session
 app.use(accountController.isAuthenticated);
 
@@ -234,9 +239,6 @@ app.get('/account/unlink/:provider', accountController.unlinkExternalAccount);
 app.get('/dashboard', dashboardController.index);
 app.post('/dashboard/:document_id/public', dashboardController.documentUpdatePublic);
 app.post('/dashboard/:document_id/important', dashboardController.documentUpdateImportant);
-
-app.get('/stat/document', statController.document);
-app.get('/stat/system', statController.system);
 
 // 500 Error Handler
 app.use(errorHandler());
