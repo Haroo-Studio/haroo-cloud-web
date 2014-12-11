@@ -19,40 +19,51 @@
         <div class="top-menu-alternative">
             <a href="/" class="top-menu-heading go-home">Home</a>
         </div>
+        <ul>
+            <li class="">
+                <a href="/stat/document">Document Status</a>
+            </li>
+        </ul>
     </div>
     <div class="alternative-content">
         <div class="pure-g">
             <div class="pure-u-1">
-                <div class="header">
+                <div class="header" id="token" data-id="{{ _csrf }}">
                     <h1>System Status</h1>
-                    <h2>Start your comfortable document life</h2>
+                    <h2>Operations will be easy activated</h2>
                 </div>
                 <div class="content">
-                    <h2 class="content-subhead">Server Power Status</h2>
+                    <h2 class="content-subhead">Server Load Status</h2>
                     <p>
-                        daily counted
+                        some explain here
                     </p>
                 </div>
-                <div class="graph-full">
-
+                <div class="graph-full" id="power">
+                    <div class="chart">
+                        <canvas height="75"></canvas>
+                    </div>
                 </div>
                 <div class="content">
                     <h2 class="content-subhead">Cloud Traffic Status</h2>
                     <p>
-                        daily counted
+                        some explain here
                     </p>
                 </div>
-                <div class="graph-full">
-
+                <div class="graph-full" id="traffic">
+                    <div class="chart">
+                        <canvas height="75"></canvas>
+                    </div>
                 </div>
                 <div class="content">
                     <h2 class="content-subhead">Document Storage Status</h2>
                     <p>
-                        daily counted
+                        some explain here
                     </p>
                 </div>
-                <div class="graph-full">
-
+                <div class="graph-full" id="storage">
+                    <div class="chart">
+                        <canvas height="75"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -60,6 +71,70 @@
     {% include '../partials/footer.html' %}
 </div>
 <script src="/components/jquery/dist/jquery.min.js"></script>
-<script src="/js/index.js"></script>
+<script src="/components/Chart.js/Chart.min.js"></script>
+<!--<script src="/js/stat.js"></script>-->
+<script>
+    $(document).ready(function () {
+        Chart.defaults.global.responsive = true;
+        Chart.defaults.global.scaleStartValue = 0;
+        var token = $('#token').data('id');
+
+        $.post('/stat/system', {_csrf: token}, function (result) {
+            var powerData = {
+                labels: result.power.label,
+                datasets: [
+                    {
+                        label: "System Load",
+                        fillColor: "rgba(151,187,205,0.2)",
+                        strokeColor: "rgba(151,187,205,1)",
+                        pointColor: "rgba(151,187,205,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(151,187,205,1)",
+                        data: result.power.value
+                    }
+                ]
+            };
+            var power = $("#power").children('.chart').children('canvas').get(0).getContext("2d");
+            new Chart(power).Line(powerData);
+
+            var trafficData = {
+                labels: result.traffic.label,
+                datasets: [
+                    {
+                        label: "Network Traffic",
+                        fillColor: "rgba(151,187,205,0.2)",
+                        strokeColor: "rgba(151,187,205,1)",
+                        pointColor: "rgba(151,187,205,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(151,187,205,1)",
+                        data: result.traffic.value
+                    }
+                ]
+            };
+            var traffic = $("#traffic").children('.chart').children('canvas').get(0).getContext("2d");
+            new Chart(traffic).Line(trafficData);
+
+            var storageData = {
+                labels: result.storage.label,
+                datasets: [
+                    {
+                        label: "Database Storage",
+                        fillColor: "rgba(151,187,205,0.2)",
+                        strokeColor: "rgba(151,187,205,1)",
+                        pointColor: "rgba(151,187,205,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(151,187,205,1)",
+                        data: result.storage.value
+                    }
+                ]
+            };
+            var storage = $("#storage").children('.chart').children('canvas').get(0).getContext("2d");
+            new Chart(storage).Line(storageData);
+        });
+    });
+</script>
 </body>
 </html>

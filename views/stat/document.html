@@ -11,7 +11,6 @@
     <link href="/components/pure/pure-min.css" rel="stylesheet">
     <link href="/components/pure/grids-responsive-min.css" rel="stylesheet">
     <link href="/components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-    <link href="/components/metrics-graphics/css/metricsgraphics.css" rel="stylesheet">
     <link href="/css/haroo-cloud.css" rel="stylesheet">
 </head>
 <body>
@@ -20,6 +19,11 @@
         <div class="top-menu-alternative">
             <a href="/" class="top-menu-heading go-home">Home</a>
         </div>
+        <ul>
+            <li class="">
+                <a href="/stat/system">System Status</a>
+            </li>
+        </ul>
     </div>
     <div class="alternative-content">
         <div class="pure-g">
@@ -31,29 +35,35 @@
                 <div class="content">
                     <h2 class="content-subhead">Document Status</h2>
                     <p>
-                        daily counted
+                        some explain here
                     </p>
                 </div>
                 <div class="graph-full" id="documents">
-
+                    <div class="chart">
+                        <canvas height="75"></canvas>
+                    </div>
                 </div>
                 <div class="content">
-                    <h2 class="content-subhead">Public Document Increment</h2>
+                    <h2 class="content-subhead">Public Document Status</h2>
                     <p>
-                        daily counted
+                        some explain here
                     </p>
                 </div>
-                <div class="graph-full" id="public_documents_status">
-
+                <div class="graph-full" id="publicDocs">
+                    <div class="chart">
+                        <canvas height="75"></canvas>
+                    </div>
                 </div>
                 <div class="content">
                     <h2 class="content-subhead">Attached File Size</h2>
                     <p>
-                        daily counted
+                        some explain here
                     </p>
                 </div>
-                <div class="graph-full" id="attached_file_size">
-
+                <div class="graph-full" id="files">
+                    <div class="chart">
+                        <canvas height="75"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -61,46 +71,68 @@
     {% include '../partials/footer.html' %}
 </div>
 <script src="/components/jquery/dist/jquery.min.js"></script>
-<script src="/components/d3/d3.min.js"></script>
-<script src="/components/metrics-graphics/js/metricsgraphics.min.js"></script>
+<script src="/components/Chart.js/Chart.min.js"></script>
 <!--<script src="/js/stat.js"></script>-->
 <script>
     $(document).ready(function () {
-        var $documents = $('#documents');
-        var graph_width = $documents.width();
+        Chart.defaults.global.responsive = true;
+        Chart.defaults.global.scaleStartValue = 0;
         var token = $('#token').data('id');
+
         $.post('/stat/document', {_csrf: token}, function (result) {
-            var documents = result.documents;
-            var public_documents_status = result.public_documents_status;
-            var attached_file_size = result.attached_file_size;
-            data_graphic({
-                data: documents,
-                width: graph_width,
-                height: 250,
-                target: '#documents',
-                markers: [{'date': 10, 'label': '"open beta" released.'}, {'date': 46, 'label': '"closed beta" released.'}],
-                x_accessor: "date",
-                y_accessor: "sightings"
-            });
-            data_graphic({
-                data: public_documents_status,
-                width: graph_width,
-                height: 250,
-                target: '#public_documents_status',
-                markers: [{'date': 14, 'label': '"open beta" released.'}, {'date': 19, 'label': '"closed beta" released.'}],
-                show_years: false,
-                x_accessor: "date",
-                y_accessor: "count"
-            });
-            data_graphic({
-                data: attached_file_size,
-                width: graph_width,
-                height: 250,
-                target: '#attached_file_size',
-                markers: [{'date': 5, 'label': '"open beta" released.'}, {'date': 14, 'label': '"closed beta" released.'}],
-                x_accessor: "date",
-                y_accessor: "count"
-            });
+            var documentsData = {
+                labels: result.documents.label,
+                datasets: [
+                    {
+                        label: "System Load",
+                        fillColor: "rgba(151,187,205,0.2)",
+                        strokeColor: "rgba(151,187,205,1)",
+                        pointColor: "rgba(151,187,205,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(151,187,205,1)",
+                        data: result.documents.value
+                    }
+                ]
+            };
+            var documents = $("#documents").children('.chart').children('canvas').get(0).getContext("2d");
+            new Chart(documents).Line(documentsData);
+
+            var publicDocsData = {
+                labels: result.publicDocs.label,
+                datasets: [
+                    {
+                        label: "Network Traffic",
+                        fillColor: "rgba(151,187,205,0.2)",
+                        strokeColor: "rgba(151,187,205,1)",
+                        pointColor: "rgba(151,187,205,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(151,187,205,1)",
+                        data: result.publicDocs.value
+                    }
+                ]
+            };
+            var publicDocs = $("#publicDocs").children('.chart').children('canvas').get(0).getContext("2d");
+            new Chart(publicDocs).Line(publicDocsData);
+
+            var filesData = {
+                labels: result.files.label,
+                datasets: [
+                    {
+                        label: "Database Storage",
+                        fillColor: "rgba(151,187,205,0.2)",
+                        strokeColor: "rgba(151,187,205,1)",
+                        pointColor: "rgba(151,187,205,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(151,187,205,1)",
+                        data: result.files.value
+                    }
+                ]
+            };
+            var files = $("#files").children('.chart').children('canvas').get(0).getContext("2d");
+            new Chart(files).Line(filesData);
         });
     });
 </script>
