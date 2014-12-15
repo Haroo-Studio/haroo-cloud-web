@@ -2,30 +2,30 @@
     <div class="haroonote-content-header pure-g">
         <div class="pure-u-1-2">
             <p class="haroonote-content-date">
-                <i class="fa fa-pencil" title="Created at"> {{ item.value['created_at']|date('Y-m-d H:m:i') }}</i>
-                {%- if item.value['updated_at'] -%}
-                <i class="fa fa-pencil-square-o" title="Updated at"> {{ item.value['updated_at']|date('Y-m-d H:m:i') }}</i>
+                <i class="fa fa-pencil" title="Created at"> {{ item.doc['created_at']|date('Y-m-d H:m:i') }}</i>
+                {%- if item.doc['updated_at'] -%}
+                <i class="fa fa-pencil-square-o" title="Updated at"> {{ item.doc['updated_at']|date('Y-m-d H:m:i') }}</i>
                 {%- endif -%}
             </p>
-            {% if item.value['tags'].length %}
+            {% if item.doc['tags'].length %}
             <p class="haroonote-content-tag">
-                {% if item.value['tags'].length > 1 %}
+                {% if item.doc['tags'].length > 1 %}
                 <i class="fa fa-tags">
-                    {% for tag in item.value['tags'] %}
+                    {% for tag in item.doc['tags'] %}
                     <a href="#"><span>{{ tag }}</span></a>
                     {% endfor %}
                 </i>
                 {% else %}
-                <i class="fa fa-tag"> <a href="#"><span>{{ item.value['tags'] }}</span></a></i>
+                <i class="fa fa-tag"> <a href="#"><span>{{ item.doc['tags'] }}</span></a></i>
                 {% endif %}
             </p>
             {% endif %}
         </div>
-        <div class="haroonote-content-controls pure-u-1-2" data-id="{{ item.value['_id']|safe }}">
-            <button class="secondary-button pure-button {% if item.value['important'] %}pure-button-active {% endif %}important">Important</button>
-            <button class="secondary-button pure-button {% if item.value['meta'] && item.value['meta'].share %}pure-button-active {% endif %}public">Public</button>
-            {% if item.value['meta'] && item.value['meta'].share -%}
-            <a href="{{ site.url }}/p/{{ item.value['meta'].share }}" target="_blank" class="secondary-button pure-button link">Link</a>
+        <div class="haroonote-content-controls pure-u-1-2" data-id="{{ item.doc['_id']|safe }}">
+            <button class="secondary-button pure-button {% if item.doc['important'] %}pure-button-active {% endif %}important">Important</button>
+            <button class="secondary-button pure-button {% if item.doc['meta'] && item.doc['meta'].share %}pure-button-active {% endif %}public">Public</button>
+            {% if item.doc['meta'] && item.doc['meta'].share -%}
+            <a href="{{ site.url }}/p/{{ item.doc['meta'].share }}" target="_blank" class="secondary-button pure-button link">Link</a>
             {% else %}
             <a href="" target="_blank" class="secondary-button pure-button link" style="display: none">Link</a>
             {%- endif %}
@@ -34,9 +34,9 @@
     </div>
 
     <div class="haroonote-content-body">
-        {{ item.value['html'] | safe }}
+        {{ item.doc['markdown'] | markdown }}
     </div>
     <div class="haroonote-content-toc">
-        {{ item.value['toc'].html | safe }}
+        {{ item.doc['toc'].markdown | markdown }}
     </div>
 </div>

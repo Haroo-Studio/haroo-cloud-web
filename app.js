@@ -15,6 +15,7 @@ var errorHandler = require('errorhandler');
 var csrf = require('lusca').csrf();
 var methodOverride = require('method-override');
 var swig = require('swig');
+var swigExtras = require('swig-extras');
 var useragent = require('express-useragent');
 
 var _ = require('lodash');
@@ -61,6 +62,8 @@ app.engine('html', swig.renderFile);
 app.set('view engine', 'html');
 app.set('view cache', false);
 swig.setDefaults({ cache: false });
+swigExtras.useFilter(swig, 'markdown');
+swigExtras.useFilter(swig, 'nl2br');
 
 app.use(compress());
 /*

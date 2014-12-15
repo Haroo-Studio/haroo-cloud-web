@@ -86,17 +86,17 @@
         {% include 'partials/flash-message.html' %}
 
         {% for item in list %}
-        {% set type = item.value['type'] || 'note' %}
+        {% set type = item.doc['type'] || 'note' %}
         <div class="haroonote-item pure-g haroonote-item-{{ type }}" data-id="{{ loop.index }}">
             <div class="pure-u-1">
-                {% if item.value['tags'].length %}
-                <h5 class="haroonote-item-tags">{{ item.value['tags'] }}</h5>
+                {% if item.doc['tags'].length %}
+                <h5 class="haroonote-item-tags">{{ item.doc['tags'] }}</h5>
                 {% endif %}
-                <h4 class="haroonote-subject">{{ item.value['title'] }}</h4>
+                <h4 class="haroonote-subject">{{ item.doc['title'] }}</h4>
                 <p class="haroonote-desc">
                 </p>
                 <p class="haroonote-meta">
-                    {{- item.value.updated_at|date('Y-m-d') || item.value.created_at|date('Y-m-d') -}}
+                    {{- item.doc.updated_at|date('Y-m-d') || item.doc.created_at|date('Y-m-d') -}}
                 </p>
             </div>
         </div>
