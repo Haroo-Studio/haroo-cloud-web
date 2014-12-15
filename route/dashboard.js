@@ -48,7 +48,7 @@ exports.index = function (req, res) {
 
     async.parallel([
             function (callback) {
-                couch.view(listType, orderType, function (err, result) {
+                couch.view(listType, orderType, {include_docs:true},  function (err, result) {
                     if (!err) {
                         callback(null, result.rows);
                     } else {
@@ -57,7 +57,7 @@ exports.index = function (req, res) {
                 });
             },
             function (callback) {
-                couch.view('tag', 'by_name', function (err, result) {
+                couch.view('tag', 'by_name', {include_docs:true}, function (err, result) {
                     if (!err) {
                         callback(null, result.rows);
                     } else {
