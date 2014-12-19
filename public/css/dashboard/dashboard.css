@@ -250,10 +250,19 @@ a {
   margin: 1em auto;
   max-width: 720px;
 }
+.public-content .public-content-body .public-content-date {
+  margin-bottom: 0.2em;
+}
+.public-content .public-content-body .public-content-date i {
+  margin-right: 1em;
+}
 .public-content-toc {
+  overflow: auto;
+  font-size: 0.9em;
   background: #fafafa;
   position: static;
   width: 100%;
+  max-height: 94%;
   border: 1px solid #b1b2bf;
   margin: 1em;
 }
