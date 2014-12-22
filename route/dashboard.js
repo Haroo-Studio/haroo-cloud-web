@@ -108,6 +108,12 @@ exports.documentUpdatePublic = function (req, res) {
 };
 
 exports.documentPublicView = function (req, res) {
+    var md = require('markdown-it')('full', {
+        html: true,
+        linkify: true,
+        typographer: true
+    });
+
     var params = {
         date: req.param('date'),
         counter: Number(req.param('counter')),
@@ -118,6 +124,12 @@ exports.documentPublicView = function (req, res) {
 
     Document.publicView(nano, params, function (result) {
         if (result.doc) {
+            result.rendered = md.render(result.doc.markdown);
+
+            if (result.doc.toc) {
+                result.renderedToc = md.render(result.doc.toc.markdown);
+            }
+
             res.render('document_public_view', result);
         } else {
             res.status(500).send('NOTHING TO SHOW, PLEASE USE CORRECT PUBLIC URL');

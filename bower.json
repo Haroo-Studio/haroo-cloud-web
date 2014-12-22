@@ -21,6 +21,7 @@
     "jquery": "~2.1.1",
     "jquery-cookie": "~1.4.1",
     "haroopad-keymage": "git@github.com:rhiokim/haroopad-keymage.git#~1.0.1",
-    "Chart.js": "1.0.1-beta"
+    "Chart.js": "1.0.1-beta",
+    "markdown-it": "~2.1.1"
   }
 }

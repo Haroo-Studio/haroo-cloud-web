@@ -1,3 +1,8 @@
+var markdownIt = window.markdownit('full',{
+    html: true,
+    linkify: true,
+    typographer: true
+});
 var dashboard = {
     id: 1,
     id_max: 0,
@@ -38,7 +43,14 @@ var dashboard = {
         this.list.removeClass(selectClass);
         this.content.hide();
         this.list.filter('[data-id=' + viewID + ']').addClass(selectClass);
-        this.content.filter('[data-id=' + viewID + ']').show();
+        var view = this.content.filter('[data-id=' + viewID + ']').show().children('.haroonote-content-body');
+
+        if (!view.hasClass('rendered')) {
+            var markdown = view.html();
+            var rendered = markdownIt.render(markdown);
+            view.addClass('rendered');
+            view.html(rendered);
+        }
     }
 };
 

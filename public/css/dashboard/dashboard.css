@@ -265,6 +265,13 @@ a {
   max-height: 94%;
   border: 1px solid #b1b2bf;
   margin: 1em;
+  padding-left: 10px;
+}
+.public-content-toc ul {
+  padding-left: 30px;
+}
+.public-content-toc ul li {
+  margin-left: -10px;
 }
 .public-content-toc .close-icon {
   display: none;
