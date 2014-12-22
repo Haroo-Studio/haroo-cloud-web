@@ -151,7 +151,8 @@ $('document').ready(function () {
         $.cookie('remove-premium-box', '1', { expires: 7, path: '/' });
     });
 
-    // document meta control
+    // document meta control, disabled for now, don't update from outside
+    /*
     var viewControl = $main.children().find('.haroonote-content-controls');
     var toggleStr = {
         imp: '.important',
@@ -183,4 +184,5 @@ $('document').ready(function () {
             dashboardViewCtrl.toggleAction(that, isPublic);
         });
     });
+    */
 });

@@ -22,12 +22,11 @@
             {% endif %}
         </div>
         <div class="haroonote-content-controls pure-u-1-2" data-id="{{ item.doc['_id']|safe }}">
-            <button class="secondary-button pure-button {% if item.doc['important'] %}pure-button-active {% endif %}important">Important</button>
-            <button class="secondary-button pure-button {% if item.doc['meta'] && item.doc['meta'].share %}pure-button-active {% endif %}public">Public</button>
+            {% if item.doc['important'] %}
+            <button class="secondary-button pure-button pure-button-active">Important</button>
+            {% endif %}
             {% if item.doc['meta'] && item.doc['meta'].share -%}
-            <a href="{{ site.url }}/p/{{ item.doc['meta'].share }}" target="_blank" class="secondary-button pure-button link">Link</a>
-            {% else %}
-            <a href="" target="_blank" class="secondary-button pure-button link" style="display: none">Link</a>
+            <a href="{{ site.url }}/p/{{ item.doc['meta'].share }}" target="_blank" class="secondary-button pure-button pure-button-active">Public Url</a>
             {%- endif %}
             <button class="secondary-button pure-button download">Download</button>
         </div>
