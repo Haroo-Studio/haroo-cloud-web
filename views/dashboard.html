@@ -17,15 +17,17 @@
 <div id="layout" class="content pure-g">
     <div id="nav" class="pure-u">
         <a class="nav-menu-button"><i class="fa fa-bars"></i></a>
-        <a href="/dashboard" class="nav-menu-avatar">
-            {% if user.profile.picture %}
-            <img class="profile-avatar" src="{{ user.profile.picture }}" alt="user avatar"/>
-            {% elseif isGravatar && gravatar %}
-            <img class="profile-avatar" src="{{ gravatar }}" alt="user avatar"/>
-            {% else %}
-            <img class="profile-avatar" src="/img/avatar.jpg" alt="user avatar"/>
-            {% endif %}
-        </a>
+        <div class="nav-menu-avatar">
+            <a href="/dashboard" class="avatar-holder">
+                {% if user.profile.picture %}
+                <img class="profile-avatar" src="{{ user.profile.picture }}" alt="user avatar"/>
+                {% elseif isGravatar && gravatar %}
+                <img class="profile-avatar" src="{{ gravatar }}" alt="user avatar"/>
+                {% else %}
+                <img class="profile-avatar" src="/img/avatar.jpg" alt="user avatar"/>
+                {% endif %}
+            </a>
+        </div>
         <div class="nav-profile">
             <p>4,356kB</p>
             <p>Free Account</p>
