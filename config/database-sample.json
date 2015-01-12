@@ -3,6 +3,9 @@
         "host": "mongodb://localhost:27017/test"
     },
     "couch": {
-        "host": "http://localhost:5984/test"
+        "host": "localhost",
+        "port": "5984",
+        "id": "user-id",
+        "pass": "user-password"
     }
 }

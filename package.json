@@ -32,6 +32,7 @@
   "devDependencies": {},
   "scripts": {
     "start": "nodemon app.js",
+    "configure": "cd config; cp database-sample.json database.json; cp mailer-sample.json mailer.json; cp passport-sample.json passport.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
