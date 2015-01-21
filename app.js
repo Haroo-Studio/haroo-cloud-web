@@ -1,27 +1,32 @@
 // set global env
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+var app = {
+    node_env: process.env.NODE_ENV || 'development',
+    init: require('./route'),
+    config: require('./config')
+};
 
-// Core Utility
-var path = require('path');
+app.init(app.node_env, function (server) {
+    var mongoose = require('mongoose');
 
-// Module dependency
-var express = require('express');
-var cookieParser = require('cookie-parser');
-var compress = require('compression');
-var session = require('express-session');
-var bodyParser = require('body-parser');
-var logger = require('morgan');
-var errorHandler = require('errorhandler');
-var csrf = require('lusca').csrf();
-var methodOverride = require('method-override');
-var swig = require('swig');
-var swigExtras = require('swig-extras');
-var useragent = require('express-useragent');
+    var config = app.config({mode: app.node_env});
+
+    // init mongoose
+    mongoose.connect(config.database.mongo[0].host);
+    mongoose.connection.on('error', function () {
+        console.error('MongoDB Connection Error. Make sure MongoDB is running.');
+    });
+
+    // start application
+    server.listen(config.server.port, function serverStarted() {
+        //console.log('%s listening at %s', server.name, server.url);
+    });
+
+
+    //todo: bind global exception
+
+});
 
 var _ = require('lodash');
-var MongoStore = require('connect-mongo')({ session: session });
-var flash = require('express-flash');
-var expressValidator = require('express-validator');
 //var connectAssets = require('connect-assets');
 
 // Secret Token
