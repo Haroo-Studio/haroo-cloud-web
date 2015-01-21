@@ -10,27 +10,24 @@ var errorHandler = require('errorhandler');
 var csrf = require('lusca').csrf();
 var methodOverride = require('method-override');
 var swig = require('swig');
-var swigExtras = require('swig-extras');
 var useragent = require('express-useragent');
 var i18n = require('i18next');
 
-var dashboardController = require('./dashboard');
-var accountController = require('./account');
-var statController = require('./stat');
+var MongoStore = require('connect-mongo')({ session: session });
+var flash = require('express-flash');
+var expressValidator = require('express-validator');
+
+var dashboard = require('./dashboard');
 var account = require('./account');
+var stat = require('./stat');
 
 function route(mode, callback) {
 
-    var app = config({mode: mode}).app;
-
-    // init for server session
-    var MongoStore = require('connect-mongo')({ session: session });
-    var flash = require('express-flash');
-    var expressValidator = require('express-validator');
+    var config = config({mode: mode});
 
     // init for localize
     i18n.init({
-        lng: app.lang,
+        lng: config.app.lang,
         useCookie: false,
         debug: false,
         sendMissingTo: 'fallback'
@@ -38,133 +35,215 @@ function route(mode, callback) {
 
     var server = express();
 
-    // globalMiddleware
-    server.use(restify.throttle({
-        burst: 100,
-        rate: 50,
-        ip: true,
-        overrides: {
-            '192.168.1.1': {
-                rate: 0,        // unlimited
-                burst: 0
-            }
-        }
+    // Express configuration.
+    server.set('hostEnv', mode);
+    server.set('port', config.server.port);
+    server.set('views', path.join(__dirname, 'views'));
+    server.engine('html', swig.renderFile);
+    server.set('view engine', 'html');
+    server.set('view cache', false);
+    swig.setDefaults({ cache: false });
+
+    server.use(compress());
+
+    server.use(logger('dev'));
+    server.use(bodyParser.json());
+    server.use(bodyParser.urlencoded({ extended: true }));
+    server.use(expressValidator());
+    server.use(methodOverride());
+    server.use(cookieParser());
+    server.use(session({
+        secret: config.common['sessionSecret'],
+        resave: true,
+        saveUninitialized: true,
+        store: new MongoStore({
+            url: database['mongo'].host,
+            auto_reconnect: true
+        })
     }));
 
-    // api counter for ip district
-    server.use(middleware.callCounterForIPs);
-    server.use(middleware.callCounterForToken);
-
-    // haroo cloud api document page
-    server.get(/^\/(?!api).*$/, restify.serveStatic({
-        directory: 'static',
-        default: 'index.html'
-    }));
-
-    // dummy testing
-    server.get('/api', dummyTest.testVersion1);
-    server.get('/api/testing', dummyTest.testSimple);
-    server.get('/api/testing/:name', dummyTest.testSimpleWithParam);
-    server.get('/api/i18n', dummyTest.testI18N);
-    server.get('/api/i18n-en', dummyTest.testEnForce);
-
-    // version specified api for only feature test
-    server.get({ path: '/api/version', version: '1.0.1'}, dummyTest.testVersion1);
-    server.get({ path: '/api/version', version: '1.2.3'}, dummyTest.testVersion1_2_3);
-    server.get({ path: '/api/version', version: '2.0.1'}, dummyTest.testVersion2);
-
-    // commonMiddleware
-    // set host name to res.locals for all client
-    server.use(middleware.accessClient);
-    server.use(restify.queryParser());
-    server.use(restify.bodyParser());
-    server.use(restifyValidation.validationPlugin({
-        //errorHandler: middleware.validationError
-        // shit, can't set custom res.status by standard features, need a hack. let's do it later.
-        // todo: hack restifyValidation errorhandler
-    }));
-    /*
-     patch this and update this middleware
-     var handle = function (errors, req, res, options, next) {
-     if (options.errorHandler) {
-     return options.errorHandler(errors, res);   // for custom res.status
-     } else {
-     return res.send(400, {
-     status: 'validation failed',
-     errors: errors
-     });
-     }
-     }
-     */
-
-    // header parameter test
-    server.get('/api/test-no-header-locals', dummyTest.testCustomParams);
-    server.get('/api/test-with-header-locals', dummyTest.testCustomParams);
-
-    // for account
-    server.post({ path: '/api/account/create', validation: {
-        email: { isRequired: true, isEmail: true },
-        password: { isRequired: true }
-    }}, middleware.getCoreDatabase(mode), account.createAccount);
-    server.post({ path: '/api/account/login', validation: {
-        email: { isRequired: true, isEmail: true },
-        password: { isRequired: true }
-    }}, account.readAccount);
-    server.post({ path: '/api/account/forgot_password', validation: {
-        email: { isRequired: true, isEmail: true }
-    }}, middleware.getCoreMailer(mode), account.mailingResetPassword);
-
-    // districtMiddleware
-    server.use(middleware.accessToken);
-
-    // district test
-    server.get('/api/access-deny', dummyTest.noAccessToken);
-    server.post('/api/access-no-header-token', dummyTest.noAccessToken);
-
-    // for token
-    server.post('/api/token/validate', account.validateToken);
-
-    // for api version
-    server.post('/api/spec/version', function (req, res, next) {
-        var version = require('../package').version;
-
-        var msg = i18n.t('app.version.done');
-        var result = feedback.done(msg, {ver: version, released: new Date('2015-3-1')});
-
-        res.json(result);
-
-        next();
+    server.use(Passport.initialize());
+    server.use(Passport.session());
+    server.use(flash());
+    server.use(csrf());
+    server.use(function(req, res, callback) {
+        // Make user object available in templates.
+        res.locals.user = req.user;
+        res.locals.site = {
+            title: "Haroo Cloud Service Hub",
+            url: config.server.host,
+            dbHost: config.database,
+            mailHost: config.mailer
+        };
+        callback();
     });
 
+    // for nginx proxy
+    if (mode != 'development') {
+        server.enable('trust proxy');  // using Express behind nginx
+    }
+
+    server.use(function(req, res, callback) {
+        // Remember original destination before login.
+        var path = req.path.split('/')[1];
+
+        if (/auth|api|login|logout|signup|components|css|img|js|favicon/i.test(path) || path == '') {
+            return callback();
+        }
+        req.session.returnTo = req.path;
+        callback();
+    });
+
+    var HOUR = 3600000;
+    var DAY = HOUR * 24;
+    var WEEK = DAY * 7;
+
+    server.use(express.static(path.join(__dirname, 'public'), { maxAge: WEEK }));
+
+    // globalMiddleware
+
+    // api counter for ip district
+
+    // haroo cloud api document page
+
+    // dummy testing
+
+    // version specified api for only feature test
+
+    // commonMiddleware
+
+    // header parameter test
+
+    // for account
+
+    // districtMiddleware
+
+    // district test
+
+    // for token
+
+    // for api version
+
     // for users
-    server.post({ path: '/api/user/:haroo_id/info', validation: {
-        haroo_id: { isRequired: true }
-    }}, account.getValidateToken, account.accountInfo);
-    server.post({ path: '/api/user/:haroo_id/change_password', validation: {
-        haroo_id: { isRequired: true },
-        email: { isRequired: true, isEmail: true },
-        password: { isRequired: true }
-    }}, account.getValidateToken, account.updatePassword);
-    server.post({ path: '/api/user/:haroo_id/update_info', validation: {
-        haroo_id: { isRequired: true },
-        email: { isRequired: true, isEmail: true }
-    }}, account.getValidateToken, account.updateAccountInfo);
-    server.post({ path: '/api/user/:haroo_id/logout', validation: {
-        haroo_id: { isRequired: true },
-        email: { isRequired: true, isEmail: true }
-    }}, account.getValidateToken, account.dismissAccount);
-    server.post({ path: '/api/user/:haroo_id/delete', validation: {
-        haroo_id: { isRequired: true },
-        email: { isRequired: true, isEmail: true },
-        password: { isRequired: true }
-    }}, account.getValidateToken, account.removeAccount);
 
     // for documents
-    server.post({ path: '/api/document/:document_id/public', validation: {
-        haroo_id: { isRequired: true },
-        document_id: { isRequired: true }
-    }}, account.getValidateToken, document.togglePublic);
 
+
+
+    // Route Point
+    server.get('/', function (req, res) {
+        var params = {
+        };
+
+        req.session.clientRoute = null;
+        /*
+         if (req.isAuthenticated()) {
+            res.redirect('/dashboard');
+         } else {
+            res.render('index', params);
+         }
+         */
+        res.render('index', params);
+    });
+
+    server.get('/studio', function (req, res) {
+        var params = {};
+
+        res.render('studio/index', params);
+    });
+    server.get('/haroonote', function (req, res) {
+        var params = {};
+
+        res.render('haroonote/index', params);
+    });
+    server.get('/harookit', function (req, res) {
+        var params = {};
+
+        res.render('harookit/index', params);
+    });
+
+    server.get('/download', useragent.express(), function (req, res) {
+        var params = {
+            isDesktop: req.useragent.isDesktop,
+            isMac: req.useragent.isMac,
+            isWindows: req.useragent.isWindows,
+            isLinux: req.useragent.isLinux,
+            isLinux64: req.useragent.isLinux64
+        };
+        var haroonoteAppUrl = '/';
+
+        if (!params.isDesktop) {
+            res.render('index', params);
+        } else {
+            if (params.isMac) haroonoteAppUrl = '/get/mac';
+            if (params.isLinux) haroonoteAppUrl = '/get/linux';
+            if (params.isLinux64) haroonoteAppUrl = '/get/linux64';
+            if (params.isWindows) haroonoteAppUrl = '/get/windows';
+
+            res.redirect(haroonoteAppUrl);
+        }
+    });
+    server.get('/get/mac', function (req, res) {
+        res.redirect(config.common['appDownloadUrl']['MAC']);
+    });
+    server.get('/get/linux', function (req, res) {
+        res.redirect(config.common['appDownloadUrl']['LINUX']);
+    });
+    server.get('/get/linux64', function (req, res) {
+        res.redirect(config.common['appDownloadUrl']['LINUX64']);
+    });
+    server.get('/get/linux-deb', function (req, res) {
+        res.redirect(config.common['appDownloadUrl']['LINUX-DEB']);
+    });
+    server.get('/get/linux64-deb', function (req, res) {
+        res.redirect(config.common['appDownloadUrl']['LINUX64-DEB']);
+    });
+    server.get('/get/windows', function (req, res) {
+        res.redirect(config.common['appDownloadUrl']['WINDOWS']);
+    });
+
+    server.get('/login', account.loginForm);
+    server.post('/login', account.login);
+    server.get('/logout', account.logout);
+    server.get('/signup', account.signUpForm);
+    server.post('/signup', account.signUp);
+
+    server.get('/account/reset-password', account.resetPasswordForm);
+    server.post('/account/reset-password', account.resetPassword);
+    server.get('/account/update-password/:token?', account.updatePasswordForm);
+    server.post('/account/update-password/:token?', account.updatePasswordForReset);
+
+    server.get('/auth/twitter', Passport.authenticate('twitter'));
+    server.get('/auth/twitter/callback', account.linkExternalAccount);
+
+    server.get('/auth/facebook', Passport.authenticate('facebook', { scope: ['email', 'user_location'] }));
+    server.get('/auth/facebook/callback', account.linkExternalAccount);
+
+    server.get('/auth/google', Passport.authenticate('google', { scope: 'profile email' }));
+    server.get('/auth/google/callback', account.linkExternalAccount);
+
+    server.get('/p/:date/:counter', dashboard.documentPublicView);
+
+    server.get('/stat/document', stat.document);
+    server.get('/stat/system', stat.system);
+    server.post('/stat/document', stat.documentStat);
+    server.post('/stat/system', stat.systemStat);
+
+    // restrict session
+    server.use(account.isAuthenticated);
+
+    server.post('/account/profile', account.updateProfile);
+    server.post('/account/password', account.updatePassword);
+    server.post('/account/delete', account.deleteAccount);
+
+    server.get('/account/unlink/:provider', account.unlinkExternalAccount);
+
+    server.get('/dashboard', dashboard.index);
+    server.post('/dashboard/:document_id/public', dashboard.documentUpdatePublic);
+    server.post('/dashboard/:document_id/important', dashboard.documentUpdateImportant);
+
+    // 500 Error Handler
+    server.use(errorHandler());
 
 
     callback(server);

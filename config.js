@@ -7,6 +7,12 @@ var app = function appConfig(option) {
     return config[option.mode];
 };
 
+var common = function appConfig(option) {
+    var config = require('./config/common');
+
+    return config[option.mode];
+};
+
 var server = function serverConfig(option) {
     var config = require('./config/server');
 
@@ -30,6 +36,7 @@ module.exports = function getConfiguration(option) {
         name: SERVICE_NAME,
         root: SERVICE_FOLDER,
         app: app(option),
+        common: common(option),
         server: server(option),
         mailer: mailer(option),
         database: database(option)
