@@ -1,15 +1,6 @@
 var _ = require('lodash');
-var Pipe = require('pipe');
-
-var database = require('../config/database');
-var mailer = require('../config/mailer');
-
-var Account = Pipe.Account;
-var AccountLog = Pipe.AccountLog;
-var Passport = Pipe.Passport;
-
-var Code = Pipe.HarooCode;
-var Common = Pipe.CommonUtil;
+var request = require('request');
+var Passport = require('passport');
 
 // Login Required middleware.
 exports.isAuthenticated = function(req, res, callback) {
@@ -49,7 +40,7 @@ exports.linkExternalAccount = function (req, res, next) {
                 return next(err);
             }
 
-            Common.saveAccountLinkLog(provider, user.email);
+            //Common.saveAccountLinkLog(provider, user.email);
 
             // clear client session
             req.session.clientRoute = null;
@@ -66,24 +57,32 @@ exports.unlinkExternalAccount = function (req, res) {
         provider: req.param('provider')
     };
 
-    Account.unlinkAccountByProvider(params, function (err, result) {
-        console.log(result);
-        req.flash('info', {msg: params.provider + ' account has been unlinked.'});
-        res.redirect('/dashboard');
-    });
+    Account.findById(params.user_id, function (err, user) {
+        if (err) {
+            params['result'] = CommonUtil.setDBErrorToClient(err, HarooCode.account.external.database, params['result']);
 
-    //Account.findById(req.user.id, function(err, user) {
-    //    if (err) return next(err);
-    //
-    //    user[provider] = undefined;
-    //    user.tokens = _.reject(user.tokens, function(token) { return token.kind === provider; });
-    //
-    //    user.save(function(err) {
-    //        if (err) return next(err);
-    //        req.flash('info', { msg: provider + ' account has been unlinked.' });
-    //        res.redirect('/account');
-    //    });
-    //});
+            req.flash('info', {msg: params.provider + ' account has been unlinked.'});
+            res.redirect('/dashboard');
+            return callback(params['result']);
+        }
+
+        user[params['provider']] = undefined;
+        user.tokens = _.reject(user.tokens, function (token) {
+            return token.kind === params['provider'];
+        });
+
+        user.save(function (err) {
+            if (err) {
+                params['result'] = CommonUtil.setDBErrorToClient(err, HarooCode.account.external.database, params['result']);
+                return callback(params['result']);
+            }
+
+            params['result'] = CommonUtil.setAccountToClient(HarooCode.account.external.unlink, user);
+            req.flash('info', {msg: params.provider + ' account has been unlinked.'});
+            res.redirect('/dashboard');
+            callback(params['result']);
+        });
+    });
 };
 
 exports.logout = function(req, res) {

@@ -35,9 +35,8 @@ function init(mode, callback) {
     var mongoConfig = {
         uri: "mongodb://" + config.database.mongo[0].host + ":" + config.database.mongo[0].port + "/" + config.database.mongo[0].database,
         options: {
-            db: { native_parser: true },
-            user: config.database.mongo[0].auth[0],
-            pass: config.database.mongo[0].auth[1]
+            //user: config.database.mongo[0].auth[0],
+            //pass: config.database.mongo[0].auth[1]
         }
     };
 
@@ -53,9 +52,7 @@ function init(mode, callback) {
     var server = express();
 
     // Express configuration.
-    server.set('hostEnv', mode);
-    server.set('port', config.server.port);
-    server.set('views', path.join(__dirname, 'views'));
+    server.set('views', path.join(__dirname, '../views'));
     server.engine('html', swig.renderFile);
     server.set('view engine', 'html');
     server.set('view cache', false);
@@ -63,7 +60,7 @@ function init(mode, callback) {
 
     server.use(compress());
 
-    server.use(logger('dev'));
+    server.use(logger(config.server.log));
     server.use(bodyParser.json());
     server.use(bodyParser.urlencoded({ extended: true }));
     server.use(expressValidator());
@@ -113,7 +110,7 @@ function init(mode, callback) {
     var DAY = HOUR * 24;
     var WEEK = DAY * 7;
 
-    server.use(express.static(path.join(__dirname, 'public'), { maxAge: WEEK }));
+    server.use(express.static(path.join(__dirname, '../public'), { maxAge: WEEK }));
 
     // Route Point
     var home = require('../route/home');
@@ -125,21 +122,6 @@ function init(mode, callback) {
     server.use(stat);
     server.use(account);
     server.use(dashboard);
-
-    // globalMiddleware
-    // api counter for ip district
-    // haroo cloud api document page
-    // dummy testing
-    // version specified api for only feature test
-    // commonMiddleware
-    // header parameter test
-    // for account
-    // districtMiddleware
-    // district test
-    // for token
-    // for api version
-    // for users
-    // for documents
 
     // 500 Error Handler
     server.use(errorHandler());

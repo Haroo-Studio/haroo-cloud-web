@@ -1,13 +1,7 @@
 var async = require('async');
 var request = require('request');
-var Pipe = require('pipe');
 
 var database = require('../config/database');
-
-var Common = Pipe.CommonUtil;
-var Document = Pipe.Document;
-var AccountToken = Pipe.AccountToken;
-var nano = Pipe.CouchConnect(database);
 
 function getPageParams (totalCount, nowPage, pageSize, pageGutter) {
     var params = {};

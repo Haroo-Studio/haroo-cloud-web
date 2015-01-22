@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 var account = require('../controller/account');
+var Passport = require('passport');
 
 router.get('/login', account.loginForm);
 router.post('/login', account.login);
