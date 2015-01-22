@@ -102,8 +102,8 @@ exports.loginForm = function (req, res) {
 };
 
 exports.login = function(req, res) {
-    req.assert('email', 'Email is not valid').isEmail();
-    req.assert('password', 'Password cannot be blank').notEmpty();
+    req.checkBody('email', 'Email is not valid').isEmail();
+    req.checkBody('password', 'Password cannot be blank').notEmpty();
 
     var errors = req.validationErrors();
 
@@ -114,6 +114,7 @@ exports.login = function(req, res) {
 
     Passport.authenticate('local', function(err, user, info) {
         if (err || !user) {
+            console.error(err);
             req.flash('errors', { msg: err || info.message });
             return res.redirect('/login');
         } else {
