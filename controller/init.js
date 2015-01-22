@@ -46,7 +46,7 @@ function init(mode, callback) {
     });
 
     // init passport
-    passportInit(config.app, config.passport, config.database.couch[0]);
+    passportInit(config.passport, config.database.couch[0]);
 
     // bind express server
     var server = express();
@@ -74,6 +74,7 @@ function init(mode, callback) {
     }));
 
     server.use(passport.initialize());
+    // todo: remove passport session, make custom!
     server.use(passport.session());
     server.use(flash());
     server.use(lusca.csrf());

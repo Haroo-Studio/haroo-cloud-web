@@ -7,7 +7,7 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var Account = require('../model/account');
 var common = require('./common');
 
-function PassportConfig(appConfig, passportConf, couchdb) {
+function PassportConfig(passportConf, couchdb) {
     passport.serializeUser(function (user, callback) {
         callback(null, user.id);
     });
@@ -18,6 +18,7 @@ function PassportConfig(appConfig, passportConf, couchdb) {
         });
     });
 
+    // todo: remove local auth, tobe: api call and save custom session
     // Sign in using Email and Password.
     passport.use(new LocalStrategy({usernameField: 'email'}, function (email, password, callback) {
         Account.findOne({email: email}, function (err, user) {

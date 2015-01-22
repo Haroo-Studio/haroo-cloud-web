@@ -2,6 +2,8 @@ var _ = require('lodash');
 var request = require('request');
 var Passport = require('passport');
 
+var AccountLog = require('./accountLog');
+
 // Login Required middleware.
 exports.isAuthenticated = function(req, res, callback) {
     if (req.isAuthenticated()) return callback();
@@ -85,16 +87,6 @@ exports.unlinkExternalAccount = function (req, res) {
     });
 };
 
-exports.logout = function(req, res) {
-    if (req.isAuthenticated()) {
-        var userEmail = req.user['email'];
-        AccountLog.logout({email: userEmail});
-    }
-    req.session.returnTo = '';
-    req.logout();
-    res.redirect('/');
-};
-
 exports.loginForm = function (req, res) {
     var params = {};
     if (req.isAuthenticated()) return res.redirect('/');
@@ -131,6 +123,16 @@ exports.login = function(req, res) {
             });
         }
     })(req, res);
+};
+
+exports.logout = function(req, res) {
+    if (req.isAuthenticated()) {
+        var userEmail = req.user['email'];
+        AccountLog.logout({email: userEmail});
+    }
+    req.session.returnTo = '';
+    req.logout();
+    res.redirect('/');
 };
 
 exports.signUpForm = function (req, res) {

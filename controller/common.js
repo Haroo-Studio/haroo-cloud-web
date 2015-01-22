@@ -6,7 +6,7 @@ var emailTemplates = require('swig-email-templates');
 
 var InitAccount = require('init-user');
 
-//var AccountLog = require('../model/accountLog');
+var AccountLog = require('../model/accountLog');
 
 var HOUR = 3600000;
 var DAY = HOUR * 24;
