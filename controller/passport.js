@@ -7,16 +7,7 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var Account = require('../model/account');
 var common = require('./common');
 
-function PassportConfig(passportConf, database) {
-    var passportSecretToken = passportConf[hostEnv];
-
-    if (!passportSecretToken) {
-        console.error('=== use dev mode oauth token by default ===');
-        passportSecretToken = passportConf['development'];
-    } else {
-        console.log('use %s mode auth token', hostEnv);
-    }
-
+function PassportConfig(passportConf, couchdb) {
     passport.serializeUser(function (user, callback) {
         callback(null, user.id);
     });
@@ -42,7 +33,7 @@ function PassportConfig(passportConf, database) {
     }));
 
     // Sign in with Twitter.
-    passport.use(new TwitterStrategy(passportSecretToken['twitter'], function (req, accessToken, tokenSecret, profile, callback) {
+    passport.use(new TwitterStrategy(passportConf['twitter'], function (req, accessToken, tokenSecret, profile, callback) {
         Account.findOne({twitter: profile.id}, function (err, existingUser) {
             if (existingUser) return callback(null, existingUser);
             Account.findOne({email: profile.username + "@twitter.com"}, function (err, existingEmailUser) {
@@ -71,13 +62,13 @@ function PassportConfig(passportConf, database) {
                     user.profile.location = profile._json.location;
                     user.profile.picture = profile._json.profile_image_url;
 
-                    user.haroo_id = common.initHarooID(user.email, database);
+                    user.haroo_id = common.initHarooID(user.email, couchdb);
                     user.from_web = 'public homepage';
-                    user.db_host = database.couch.host;
+                    user.db_host = couchdb.couch.host;
                     user.created_at = Date.now();
 
                     user.save(function (err) {
-                        common.initAccount(user.haroo_id, database);
+                        common.initAccount(user.haroo_id, couchdb);
 
                         callback(err, user);
                     });
@@ -87,7 +78,7 @@ function PassportConfig(passportConf, database) {
     }));
 
     // Sign in with Facebook.
-    passport.use(new FacebookStrategy(passportSecretToken['facebook'], function (req, accessToken, refreshToken, profile, callback) {
+    passport.use(new FacebookStrategy(passportConf['facebook'], function (req, accessToken, refreshToken, profile, callback) {
         Account.findOne({facebook: profile.id}, function (err, existingUser) {
             if (existingUser) return callback(null, existingUser);
             Account.findOne({email: profile._json.email}, function (err, existingEmailUser) {
@@ -111,13 +102,13 @@ function PassportConfig(passportConf, database) {
                     user.profile.picture = 'https://graph.facebook.com/' + profile.id + '/picture?type=large';
                     user.profile.location = (profile._json.location) ? profile._json.location.name : '';
 
-                    user.haroo_id = common.initHarooID(user.email, database);
+                    user.haroo_id = common.initHarooID(user.email, couchdb);
                     user.from_web = 'public homepage';
-                    user.db_host = database.couch.host;
+                    user.db_host = couchdb.couch.host;
                     user.created_at = Date.now();
 
                     user.save(function (err) {
-                        common.initAccount(user.haroo_id, database);
+                        common.initAccount(user.haroo_id, couchdb);
 
                         callback(err, user);
                     });
@@ -127,7 +118,7 @@ function PassportConfig(passportConf, database) {
     }));
 
     // Sign in with Google.
-    passport.use(new GoogleStrategy(passportSecretToken['google'], function (req, accessToken, refreshToken, profile, callback) {
+    passport.use(new GoogleStrategy(passportConf['google'], function (req, accessToken, refreshToken, profile, callback) {
         Account.findOne({google: profile.id}, function (err, existingUser) {
             if (existingUser) return callback(null, existingUser);
             Account.findOne({email: profile._json.email}, function (err, existingEmailUser) {
@@ -149,13 +140,13 @@ function PassportConfig(passportConf, database) {
                     user.profile.gender = profile._json.gender;
                     user.profile.picture = profile._json.picture;
 
-                    user.haroo_id = common.initHarooID(user.email, database);
+                    user.haroo_id = common.initHarooID(user.email, couchdb);
                     user.from_web = 'public homepage';
-                    user.db_host = database.couch.host;
+                    user.db_host = couchdb.couch.host;
                     user.created_at = Date.now();
 
                     user.save(function (err) {
-                        common.initAccount(user.haroo_id, database);
+                        common.initAccount(user.haroo_id, couchdb);
 
                         callback(err, user);
                     });

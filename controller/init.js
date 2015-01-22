@@ -47,7 +47,7 @@ function init(mode, callback) {
     });
 
     // init passport
-    passportInit(config.passport);
+    passportInit(config.passport, config.database.couch[0]);
 
     // bind express server
     var server = express();
