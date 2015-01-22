@@ -13,10 +13,11 @@ var csrf = require('lusca').csrf();
 var methodOverride = require('method-override');
 var swig = require('swig');
 var i18n = require('i18next');
-
-var MongoStore = require('connect-mongo')(session);
+var mongoStore = require('connect-mongo')(session);
 var flash = require('express-flash');
 var expressValidator = require('express-validator');
+var passport = require('passport');
+var passportInit = require('./passport');
 
 function init(mode, callback) {
 
@@ -45,6 +46,9 @@ function init(mode, callback) {
         console.error('MongoDB Connection Error. Make sure MongoDB is running.');
     });
 
+    // init passport
+    passportInit(config.passport);
+
     // bind express server
     var server = express();
 
@@ -69,18 +73,18 @@ function init(mode, callback) {
         secret: config.common['sessionSecret'],
         resave: true,
         saveUninitialized: true,
-        store: new MongoStore({ mongooseConnection: mongoose.connection })
+        store: new mongoStore({ mongooseConnection: mongoose.connection })
     }));
 
-    server.use(Passport.initialize());
-    server.use(Passport.session());
+    server.use(passport.initialize());
+    server.use(passport.session());
     server.use(flash());
     server.use(csrf());
     server.use(function(req, res, callback) {
         // Make user object available in templates.
         res.locals.user = req.user;
         res.locals.site = {
-            title: "Haroo Cloud Service Hub",
+            title: config.app.title,
             url: config.server.host,
             dbHost: config.database,
             mailHost: config.mailer
@@ -89,7 +93,7 @@ function init(mode, callback) {
     });
 
     // for nginx proxy
-    if (mode != 'development') {
+    if (mode == 'production') {
         server.enable('trust proxy');  // using Express behind nginx
     }
 
@@ -101,6 +105,7 @@ function init(mode, callback) {
             return callback();
         }
         req.session.returnTo = req.path;
+
         callback();
     });
 
@@ -111,10 +116,10 @@ function init(mode, callback) {
     server.use(express.static(path.join(__dirname, 'public'), { maxAge: WEEK }));
 
     // Route Point
-    var home = require('./home');
-    var stat = require('./stat');
-    var account = require('./account');
-    var dashboard = require('./dashboard');
+    var home = require('../route/home');
+    var stat = require('../route/stat');
+    var account = require('../route/account');
+    var dashboard = require('../route/dashboard');
 
     server.use(home);
     server.use(stat);

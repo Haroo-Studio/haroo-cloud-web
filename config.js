@@ -16,6 +16,12 @@ var server = function serverConfig(option) {
     return config[option.mode];
 };
 
+var passport = function passportConfig(option) {
+    var config = require('./config/passport');
+
+    return config[option.mode];
+};
+
 var mailer = function mailerConfig(option) {
     var config = require('./config/mailer');
 
@@ -33,6 +39,7 @@ module.exports = function getConfiguration(option) {
         app: app(option),
         common: common(option),
         server: server(option),
+        passport: passport(option),
         mailer: mailer(option),
         database: database(option)
     };

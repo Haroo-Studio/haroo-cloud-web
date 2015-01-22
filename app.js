@@ -1,7 +1,7 @@
 // set global env
 var app = {
     node_env: process.env.NODE_ENV || 'development',
-    init: require('./route'),
+    init: require('./controller/init'),
     config: require('./config')
 };
 
