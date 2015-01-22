@@ -9,7 +9,7 @@ var session = require('express-session');
 var bodyParser = require('body-parser');
 var logger = require('morgan');
 var errorHandler = require('errorhandler');
-var csrf = require('lusca').csrf();
+var lusca = require('lusca');
 var methodOverride = require('method-override');
 var swig = require('swig');
 var i18n = require('i18next');
@@ -79,7 +79,7 @@ function init(mode, callback) {
     server.use(passport.initialize());
     server.use(passport.session());
     server.use(flash());
-    server.use(csrf());
+    server.use(lusca.csrf());
     server.use(function(req, res, callback) {
         // Make user object available in templates.
         res.locals.user = req.user;
