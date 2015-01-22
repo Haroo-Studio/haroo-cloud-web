@@ -4,6 +4,13 @@ var Passport = require('passport');
 
 var AccountLog = require('./accountLog');
 
+var ROUTE = {
+    account: {
+        login: "/api/account/login"
+    }
+};
+
+
 // Login Required middleware.
 exports.isAuthenticated = function(req, res, callback) {
     if (req.isAuthenticated()) return callback();
@@ -104,31 +111,42 @@ exports.login = function(req, res) {
         return res.redirect('/login');
     }
 
-    //request.post(uri, option, callback);
-    Passport.authenticate('local', function(err, user, info) {
-        if (err || !user) {
-            console.error(err);
-            req.flash('errors', { msg: err || info.message });
+    var appConfig = req.config.app;
+    var uri = appConfig.api.secure ? "https://" : "http://" + appConfig.api.entryPoint + ROUTE.account.login;
+
+    request.post(uri, {form: {email: req.body.email, password: req.body.password}}, function (err, response, body) {
+        //err, user, info
+        var result = JSON.parse(body);
+
+        if (err || !response.statusCode) {
+            console.error('communication with api server :', err);
+
+            req.flash('errors', { msg: err || "communication failed with api server :" });
+
             return res.redirect('/login');
         } else {
-            req.logIn(user, function (err) {
-                if (err) {
-                    console.error(err);
-                    req.flash('errors', {msg: err});
-                    return res.redirect('/login');
-                } else {
-                    AccountLog.login({email: req.param('email')});
-                    console.log(req.session && req.session.returnTo ? req.session.returnTo : 'nothing to return');
-                    return res.redirect((req.session && req.session.returnTo && req.session.returnTo != undefined) ? req.session.returnTo : '/dashboard');
-                }
-            });
+            if (result.statusCode == 200 && result.data.email == req.body.email && result.data.haroo_id) {
+                console.log(req.session && req.session.returnTo ? req.session.returnTo : 'nothing to return');
+
+                req.login(result.data);
+
+                AccountLog.login({email: result.data.email});
+
+                return res.redirect((req.session && req.session.returnTo && req.session.returnTo != undefined) ? req.session.returnTo : '/dashboard');
+            } else {
+                console.error('login with api server :', err);
+
+                req.flash('errors', {msg: result.message});
+
+                return res.redirect('/login');
+            }
         }
-    })(req, res);
+    });
 };
 
 exports.logout = function(req, res) {
     if (req.isAuthenticated()) {
-        var userEmail = req.user['email'];
+        var userEmail = req.session.user['email'];
         AccountLog.logout({email: userEmail});
     }
     req.session.returnTo = '';
