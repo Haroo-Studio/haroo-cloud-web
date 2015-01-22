@@ -11,7 +11,7 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var Account = require('../model/account');
-var AccountInit = require('../model/accountInit');
+//var AccountInit = require('../model/accountInit');
 
 var common = require('./common');
 var database = require('../config/database');

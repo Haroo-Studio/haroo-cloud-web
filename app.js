@@ -20,8 +20,4 @@ app.init(app.node_env, function (server) {
     server.listen(config.server.port, function serverStarted() {
         console.log('Express server listening on port %d in %s mode', config.server.port, app.node_env);
     });
-
-
-    //todo: bind global exception
-
 });
