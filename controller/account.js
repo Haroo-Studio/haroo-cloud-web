@@ -112,19 +112,19 @@ exports.login = function(req, res) {
         return res.redirect('/login');
     }
 
-    Passport.authenticate('local', function(err, user, info) {
-        if (err || !user) {
-            console.error(err);
+    Passport.authenticate('local', function(err, info) {
+        if (err || info.statusCode != 200) {
             req.flash('errors', { msg: err || info.message });
+
             return res.redirect('/login');
         } else {
-            req.logIn(user, function (err) {
+            req.logIn(info.data, function (err) {
                 if (err) {
-                    console.error(err);
+                    console.error("req error", err);
                     req.flash('errors', {msg: err});
                     return res.redirect('/login');
                 } else {
-                    AccountLog.login({email: req.param('email')});
+                    //AccountLog.login({email: req.param('email')});
                     console.log(req.session && req.session.returnTo ? req.session.returnTo : 'nothing to return');
                     return res.redirect((req.session && req.session.returnTo && req.session.returnTo != undefined) ? req.session.returnTo : '/dashboard');
                 }

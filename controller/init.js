@@ -46,7 +46,7 @@ function init(mode, callback) {
     });
 
     // init passport
-    passportInit(config.passport, config.database.couch[0]);
+    passportInit(config.app, config.passport, config.database.couch[0]);
 
     // bind express server
     var server = express();
@@ -96,9 +96,10 @@ function init(mode, callback) {
 
     server.use(function(req, res, callback) {
         // Remember original destination before login.
-        var path = req.path.split('/')[1];
+        var url = req.path.split('/')[1];
 
-        if (/auth|api|login|logout|signup|components|css|img|js|favicon/i.test(path) || path == '') {
+        console.log(url);
+        if (/auth|api|password|login|logout|signup|components|css|img|js|favicon/i.test(url) || url == '') {
             return callback();
         }
         req.session.returnTo = req.path;

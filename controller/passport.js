@@ -1,3 +1,4 @@
+var request = require('request');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var TwitterStrategy = require('passport-twitter').Strategy;
@@ -7,29 +8,37 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var Account = require('../model/account');
 var common = require('./common');
 
-function PassportConfig(passportConf, couchdb) {
+var route = {
+    account: {
+        login: "/api/account/login"
+    }
+};
+
+function PassportConfig(appConfig, passportConf, couchdb) {
     passport.serializeUser(function (user, callback) {
-        callback(null, user.id);
+        callback(null, user.haroo_id);
     });
 
     passport.deserializeUser(function (id, callback) {
-        Account.findById(id, function (err, user) {
+        Account.findOne({haroo_id: id}, function (err, user) {
+            console.log(user);
             callback(err, user);
         });
     });
 
     // Sign in using Email and Password.
-    passport.use(new LocalStrategy({usernameField: 'email'}, function (email, password, callback) {
-        Account.findOne({email: email}, function (err, user) {
-            if (!user) return callback(null, false, {message: 'Email ' + email + ' not found'});
-            user.comparePassword(password, function (err, isMatch) {
-                if (isMatch) {
-                    return callback(null, user);
-                } else {
-                    return callback(null, false, {message: 'Invalid email or password.'});
+    passport.use(new LocalStrategy({usernameField: 'email', passwordField: 'password'}, function (email, password, callback) {
+        request.post({
+                url: appConfig.api.secure ? "https://" : "http://" + appConfig.api.entryPoint + route.account.login,
+                form: {
+                    email: email,
+                    password: password
                 }
+            },
+            function (err, res, body) {
+                //err, user, info
+                return callback(err, JSON.parse(body));
             });
-        });
     }));
 
     // Sign in with Twitter.
