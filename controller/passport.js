@@ -1,5 +1,4 @@
 var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
 var TwitterStrategy = require('passport-twitter').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
@@ -7,31 +6,7 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var Account = require('../model/account');
 var common = require('./common');
 
-function PassportConfig(passportConf, couchdb) {
-    passport.serializeUser(function (user, callback) {
-        callback(null, user.id);
-    });
-
-    passport.deserializeUser(function (id, callback) {
-        Account.findById(id, function (err, user) {
-            callback(err, user);
-        });
-    });
-
-    // todo: remove local auth, tobe: api call and save custom session
-    // Sign in using Email and Password.
-    passport.use(new LocalStrategy({usernameField: 'email'}, function (email, password, callback) {
-        Account.findOne({email: email}, function (err, user) {
-            if (!user) return callback(null, false, {message: 'Email ' + email + ' not found'});
-            user.comparePassword(password, function (err, isMatch) {
-                if (isMatch) {
-                    return callback(null, user);
-                } else {
-                    return callback(null, false, {message: 'Invalid email or password.'});
-                }
-            });
-        });
-    }));
+function PassportConfig(appConfig, passportConf, couchdb) {
 
     // Sign in with Twitter.
     passport.use(new TwitterStrategy(passportConf['twitter'], function (req, accessToken, tokenSecret, profile, callback) {

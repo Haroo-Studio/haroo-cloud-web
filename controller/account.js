@@ -104,6 +104,7 @@ exports.login = function(req, res) {
         return res.redirect('/login');
     }
 
+    //request.post(uri, option, callback);
     Passport.authenticate('local', function(err, user, info) {
         if (err || !user) {
             console.error(err);

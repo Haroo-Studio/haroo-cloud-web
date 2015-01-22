@@ -18,6 +18,7 @@ var flash = require('express-flash');
 var expressValidator = require('express-validator');
 var passport = require('passport');
 var passportInit = require('./passport');
+var commonMiddleware = require('../route/common');
 
 function init(mode, callback) {
 
@@ -46,7 +47,7 @@ function init(mode, callback) {
     });
 
     // init passport
-    passportInit(config.passport, config.database.couch[0]);
+    passportInit(config.app, config.passport, config.database.couch[0]);
 
     // bind express server
     var server = express();
@@ -75,44 +76,26 @@ function init(mode, callback) {
 
     server.use(passport.initialize());
     // todo: remove passport session, make custom!
-    server.use(passport.session());
+    //server.use(passport.session());
     server.use(flash());
     server.use(lusca.csrf());
-    server.use(function(req, res, callback) {
-        // Make user object available in templates.
-        res.locals.user = req.user;
-        res.locals.site = {
-            title: config.app.title,
-            url: config.server.host,
-            dbHost: config.database,
-            mailHost: config.mailer
-        };
-        callback();
-    });
 
     // for nginx proxy
     if (mode == 'production') {
         server.enable('trust proxy');  // using Express behind nginx
     }
 
-    server.use(function(req, res, callback) {
-        // Remember original destination before login.
-        var url = req.path.split('/')[1];
-
-        console.log(url);
-        if (/auth|api|password|login|logout|signup|components|css|img|js|favicon/i.test(url) || url == '') {
-            return callback();
-        }
-        req.session.returnTo = req.path;
-
-        callback();
-    });
-
     var HOUR = 3600000;
     var DAY = HOUR * 24;
     var WEEK = DAY * 7;
 
     server.use(express.static(path.join(__dirname, '../public'), { maxAge: WEEK }));
+
+    // Custom middleware
+    server.use(commonMiddleware.userSession());
+    server.use(commonMiddleware.globalLocals(config));
+    server.use(commonMiddleware.bindConfiguration(config));
+    server.use(commonMiddleware.redirectPrev());
 
     // Route Point
     var home = require('../route/home');

@@ -77,5 +77,4 @@ router.get('/harookit', function (req, res) {
     res.render('harookit/index', params);
 });
 
-
 module.exports = router;
