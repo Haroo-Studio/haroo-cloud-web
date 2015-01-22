@@ -1,6 +1,3 @@
-var SERVICE_NAME = 'haroo-cloud-web';
-var SERVICE_FOLDER = './';
-
 var app = function appConfig(option) {
     var config = require('./config/app');
 
@@ -20,21 +17,19 @@ var server = function serverConfig(option) {
 };
 
 var mailer = function mailerConfig(option) {
-    var config = require('./config')['mailer'];
+    var config = require('./config/mailer');
 
     return config[option.mode];
 };
 
 var database = function databaseConfig(option) {
-    var config = require('./config')['database'];
+    var config = require('./config/database');
 
     return config[option.mode];
 };
 
 module.exports = function getConfiguration(option) {
     return {
-        name: SERVICE_NAME,
-        root: SERVICE_FOLDER,
         app: app(option),
         common: common(option),
         server: server(option),

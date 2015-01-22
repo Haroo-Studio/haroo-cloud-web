@@ -1,5 +1,7 @@
-var config = require('../config');
+var configure = require('../config');
 
+var path = require('path');
+var mongoose = require('mongoose');
 var express = require('express');
 var cookieParser = require('cookie-parser');
 var compress = require('compression');
@@ -12,13 +14,13 @@ var methodOverride = require('method-override');
 var swig = require('swig');
 var i18n = require('i18next');
 
-var MongoStore = require('connect-mongo')({ session: session });
+var MongoStore = require('connect-mongo')(session);
 var flash = require('express-flash');
 var expressValidator = require('express-validator');
 
 function init(mode, callback) {
 
-    var config = config({mode: mode});
+    var config = configure({mode: mode});
 
     // init for localize
     i18n.init({
@@ -28,6 +30,22 @@ function init(mode, callback) {
         sendMissingTo: 'fallback'
     });
 
+    // init mongoose
+    var mongoConfig = {
+        uri: "mongodb://" + config.database.mongo[0].host + ":" + config.database.mongo[0].port + "/" + config.database.mongo[0].database,
+        options: {
+            db: { native_parser: true },
+            user: config.database.mongo[0].auth[0],
+            pass: config.database.mongo[0].auth[1]
+        }
+    };
+
+    mongoose.connect(mongoConfig.uri, mongoConfig.options);
+    mongoose.connection.on('error', function () {
+        console.error('MongoDB Connection Error. Make sure MongoDB is running.');
+    });
+
+    // bind express server
     var server = express();
 
     // Express configuration.
@@ -51,10 +69,7 @@ function init(mode, callback) {
         secret: config.common['sessionSecret'],
         resave: true,
         saveUninitialized: true,
-        store: new MongoStore({
-            url: config.database['mongo'].host,
-            auto_reconnect: true
-        })
+        store: new MongoStore({ mongooseConnection: mongoose.connection })
     }));
 
     server.use(Passport.initialize());

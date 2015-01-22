@@ -6,15 +6,7 @@ var app = {
 };
 
 app.init(app.node_env, function (server) {
-    var mongoose = require('mongoose');
-
     var config = app.config({mode: app.node_env});
-
-    // init mongoose
-    mongoose.connect(config.database.mongo[0].host);
-    mongoose.connection.on('error', function () {
-        console.error('MongoDB Connection Error. Make sure MongoDB is running.');
-    });
 
     // start application
     server.listen(config.server.port, function serverStarted() {
