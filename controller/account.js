@@ -18,7 +18,7 @@ exports.isAuthenticated = function(req, res, callback) {
     res.redirect('/login');
 };
 
-// Authorization Required middleware.
+// Authorization Required middleware. ===
 exports.isAuthorized = function(req, res, callback) {
     var provider = req.path.split('/').slice(-1)[0];
 
@@ -57,7 +57,7 @@ exports.linkExternalAccount = function (req, res, next) {
 
 };
 
-// Unlink external account
+// Unlink external account ===
 exports.unlinkExternalAccount = function (req, res) {
     var params = {
         user_id: req.user.id,

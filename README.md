@@ -17,6 +17,12 @@ web site for haroo-cloud
 * NPM
 * Bower
 
+## External auth for facebook, twitter, google+ etc...
+
+- facebook : https://developers.facebook.com/apps/781367641909033/settings/
+- twitter : https://twitter.com/settings/applications
+- google+ : https://console.developers.google.com/project/marine-aria-733/apiui/credential
+
 ## How to run from source
 
 **install dependency modules**
