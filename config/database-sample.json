@@ -1,11 +1,28 @@
 {
-    "mongo": {
-        "host": "mongodb://localhost:27017/test"
-    },
-    "couch": {
-        "host": "localhost",
-        "port": "5984",
-        "id": "user-id",
-        "pass": "user-password"
-    }
+  "production": {
+    "couch": [
+      {"host": "db1.haroocloud.com", "port": 80, "prefix": "a","auth": ["account id","password"]},
+      {"host": "db2.haroocloud.com", "port": 80, "prefix": "b", "auth": ["account id","password"]}
+    ],
+    "mongo": [
+      {"host": "localhost", "port": 27017, "auth": ["haroocloud","cloudsecret"], "database": "haroocloud"}
+    ]
+  },
+  "development": {
+    "couch": [
+      {"host": "db1.haroopress.com", "port": 80, "prefix": "b", "auth": ["account id","password"]},
+      {"host": "db2.haroopress.com", "port": 80, "prefix": "d", "auth": ["account id","password"]}
+    ],
+    "mongo": [
+      {"host": "localhost", "port": 27017, "auth": ["haroocloud","cloudsecret"], "database": "test"}
+    ]
+  },
+  "testing": {
+    "couch": [
+      {"host": "localhost", "port": 5984, "prefix": "t", "auth": ["account id","password"]}
+    ],
+    "mongo": [
+      {"host": "localhost", "port": 27017, "auth": ["haroocloud","cloudsecret"], "database": "test"}
+    ]
+  }
 }

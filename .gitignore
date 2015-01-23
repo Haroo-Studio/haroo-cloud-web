@@ -34,7 +34,6 @@ public/components
 .idea/
 
 # secrets
-config/app.json
 config/server.json
 config/database.json
 config/passport.json
