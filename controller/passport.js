@@ -57,21 +57,19 @@ function PassportConfig(appConfig, passportConf, couchdb) {
     // Sign in with Twitter.
     passport.use(new TwitterStrategy(passportConf['twitter'], function (req, accessToken, tokenSecret, profile, callback) {
         Account.findOne({twitter: profile.id}, function (err, existingUser) {
-            console.log('========== twitter bind ');
+
+            // Is linked User
             if (existingUser) {
-                console.log('========== twitter pass !');
                 // make new account token
                 setCloudToken(req.ip, appConfig.name, existingUser.haroo_id, function (err, cloudToken) {
                     var result = setDataToClient(existingUser, cloudToken);
 
-                    return callback(err, result);
+                    callback(err, result);
                 });
             } else {
                 Account.findOne({email: profile.username + "@twitter.com"}, function (err, existingEmailUser) {
-                    console.log('========== twitter exist ?');
 
                     if (existingEmailUser) {
-                        console.log('========== yes exist !');
                         existingEmailUser.twitter = profile.id;
                         existingEmailUser.tokens.push({
                             kind: 'twitter',
@@ -81,26 +79,18 @@ function PassportConfig(appConfig, passportConf, couchdb) {
                         existingEmailUser.profile.nickname = profile.displayName;
                         existingEmailUser.profile.location = profile._json.location;
                         existingEmailUser.profile.picture = profile._json.profile_image_url;
+
+                        // Link with Twitter
                         existingEmailUser.save(function (err) {
                             // make new account token
-                            var cloudToken = new AccountToken({
-                                access_ip: req.ip,
-                                access_host: appConfig.name,
-                                access_token: common.getAccessToken(),
-                                haroo_id: existingEmailUser.haroo_id,
-                                login_expire: common.getLoginExpireDate(),
-                                created_at: Date.now()
-                            });
-
-                            cloudToken.save(function (err) {
+                            setCloudToken(req.ip, appConfig.name, existingEmailUser.haroo_id, function (err, cloudToken) {
                                 var result = setDataToClient(existingEmailUser, cloudToken);
 
                                 callback(err, result);
                             });
                         });
                     } else {
-                        console.log('========== no exist !');
-
+                        // Make new Account with Twitter
                         var user = new Account();
                         // Twitter will not provide an email address.  Period.
                         // But a person’s twitter username is guaranteed to be unique
@@ -121,17 +111,8 @@ function PassportConfig(appConfig, passportConf, couchdb) {
                             common.initAccount(user.haroo_id, couchdb);
 
                             // make new account token
-                            var token = new AccountToken({
-                                access_ip: req.ip,
-                                access_host: appConfig.name,
-                                access_token: common.getAccessToken(),
-                                haroo_id: existingEmailUser.haroo_id,
-                                login_expire: common.getLoginExpireDate(),
-                                created_at: Date.now()
-                            });
-
-                            token.save(function (err) {
-                                var result = setDataToClient(existingEmailUser, token);
+                            setCloudToken(req.ip, appConfig.name, user.haroo_id, function (err, cloudToken) {
+                                var result = setDataToClient(user, cloudToken);
 
                                 callback(err, result);
                             });
@@ -145,78 +126,126 @@ function PassportConfig(appConfig, passportConf, couchdb) {
     // Sign in with Facebook.
     passport.use(new FacebookStrategy(passportConf['facebook'], function (req, accessToken, refreshToken, profile, callback) {
         Account.findOne({facebook: profile.id}, function (err, existingUser) {
-            if (existingUser) return callback(null, existingUser);
-            Account.findOne({email: profile._json.email}, function (err, existingEmailUser) {
-                if (existingEmailUser) {
-                    existingEmailUser.facebook = profile.id;
-                    existingEmailUser.tokens.push({kind: 'facebook', access_token: accessToken});
-                    existingEmailUser.profile.nickname = profile.displayName;
-                    existingEmailUser.profile.gender = profile._json.gender;
-                    existingEmailUser.profile.picture = 'https://graph.facebook.com/' + profile.id + '/picture?type=large';
-                    existingEmailUser.profile.location = (profile._json.location) ? profile._json.location.name : '';
-                    existingEmailUser.save(function (err) {
-                        callback(err, existingEmailUser);
-                    });
-                } else {
-                    var user = new Account();
-                    user.email = profile._json.email;
-                    user.facebook = profile.id;
-                    user.tokens.push({kind: 'facebook', access_token: accessToken});
-                    user.profile.nickname = profile.displayName;
-                    user.profile.gender = profile._json.gender;
-                    user.profile.picture = 'https://graph.facebook.com/' + profile.id + '/picture?type=large';
-                    user.profile.location = (profile._json.location) ? profile._json.location.name : '';
 
-                    user.haroo_id = common.initHarooID(user.email, couchdb);
-                    user.join_from = 'cloud-web-auth';
-                    user.db_host = couchdb.host;
-                    user.created_at = Date.now();
+            if (existingUser) {
+                setCloudToken(req.ip, appConfig.name, existingUser.haroo_id, function (err, cloudToken) {
+                    var result = setDataToClient(existingUser, cloudToken);
 
-                    user.save(function (err) {
-                        common.initAccount(user.haroo_id, couchdb);
+                    callback(err, result);
+                });
+            } else {
+                Account.findOne({email: profile._json.email}, function (err, existingEmailUser) {
 
-                        callback(err, user);
-                    });
-                }
-            });
+                    if (existingEmailUser) {
+                        existingEmailUser.facebook = profile.id;
+                        existingEmailUser.tokens.push({
+                            kind: 'facebook',
+                            access_token: accessToken
+                        });
+                        existingEmailUser.profile.nickname = profile.displayName;
+                        existingEmailUser.profile.gender = profile._json.gender;
+                        existingEmailUser.profile.picture = 'https://graph.facebook.com/' + profile.id + '/picture?type=large';
+                        existingEmailUser.profile.location = (profile._json.location) ? profile._json.location.name : '';
+
+                        // Link with Facebook
+                        existingEmailUser.save(function (err) {
+                            setCloudToken(req.ip, appConfig.name, existingEmailUser.haroo_id, function (err, cloudToken) {
+                                var result = setDataToClient(existingEmailUser, cloudToken);
+
+                                callback(err, result);
+                            });
+                        });
+                    } else {
+                        // Make new Account with Facebook
+                        var user = new Account();
+
+                        user.email = profile._json.email;
+                        user.facebook = profile.id;
+                        user.tokens.push({kind: 'facebook', access_token: accessToken});
+                        user.profile.nickname = profile.displayName;
+                        user.profile.gender = profile._json.gender;
+                        user.profile.picture = 'https://graph.facebook.com/' + profile.id + '/picture?type=large';
+                        user.profile.location = (profile._json.location) ? profile._json.location.name : '';
+
+                        user.haroo_id = common.initHarooID(user.email, couchdb);
+                        user.join_from = 'cloud-web-auth';
+                        user.db_host = couchdb.host;
+                        user.created_at = Date.now();
+
+                        user.save(function (err) {
+                            common.initAccount(user.haroo_id, couchdb);
+
+                            setCloudToken(req.ip, appConfig.name, user.haroo_id, function (err, cloudToken) {
+                                var result = setDataToClient(user, cloudToken);
+
+                                callback(err, result);
+                            });
+                        });
+                    }
+                });
+            }
         });
     }));
 
     // Sign in with Google.
     passport.use(new GoogleStrategy(passportConf['google'], function (req, accessToken, refreshToken, profile, callback) {
         Account.findOne({google: profile.id}, function (err, existingUser) {
-            if (existingUser) return callback(null, existingUser);
-            Account.findOne({email: profile._json.email}, function (err, existingEmailUser) {
-                if (existingEmailUser) {
-                    existingEmailUser.google = profile.id;
-                    existingEmailUser.tokens.push({kind: 'google', access_token: accessToken});
-                    existingEmailUser.profile.nickname = profile.displayName;
-                    existingEmailUser.profile.gender = profile._json.gender;
-                    existingEmailUser.profile.picture = profile._json.picture;
-                    existingEmailUser.save(function (err) {
-                        callback(err, existingEmailUser);
-                    });
-                } else {
-                    var user = new Account();
-                    user.email = profile._json.email;
-                    user.google = profile.id;
-                    user.tokens.push({kind: 'google', access_token: accessToken});
-                    user.profile.nickname = profile.displayName;
-                    user.profile.gender = profile._json.gender;
-                    user.profile.picture = profile._json.picture;
 
-                    user.haroo_id = common.initHarooID(user.email, couchdb);
-                    user.join_from = 'cloud-web-auth';
-                    user.db_host = couchdb.host;
-                    user.created_at = Date.now();
+            if (existingUser) {
+                setCloudToken(req.ip, appConfig.name, existingUser.haroo_id, function (err, cloudToken) {
+                    var result = setDataToClient(existingUser, cloudToken);
 
-                    user.save(function (err) {
-                        common.initAccount(user.haroo_id, couchdb);
+                    callback(err, result);
+                });
+            } else {
+                Account.findOne({email: profile._json.email}, function (err, existingEmailUser) {
 
-                        callback(err, user);
-                    });
-                }
-            });
+                    if (existingEmailUser) {
+                        existingEmailUser.google = profile.id;
+                        existingEmailUser.tokens.push({
+                            kind: 'google',
+                            access_token: accessToken
+                        });
+                        existingEmailUser.profile.nickname = profile.displayName;
+                        existingEmailUser.profile.gender = profile._json.gender;
+                        existingEmailUser.profile.picture = profile._json.picture;
+
+                        // Link with Google+
+                        existingEmailUser.save(function (err) {
+                            setCloudToken(req.ip, appConfig.name, existingEmailUser.haroo_id, function (err, cloudToken) {
+                                var result = setDataToClient(existingEmailUser, cloudToken);
+
+                                callback(err, result);
+                            });
+                        });
+                    } else {
+                        // Make new Account with Google+
+                        var user = new Account();
+
+                        user.email = profile._json.email;
+                        user.google = profile.id;
+                        user.tokens.push({kind: 'google', access_token: accessToken});
+                        user.profile.nickname = profile.displayName;
+                        user.profile.gender = profile._json.gender;
+                        user.profile.picture = profile._json.picture;
+
+                        user.haroo_id = common.initHarooID(user.email, couchdb);
+                        user.join_from = 'cloud-web-auth';
+                        user.db_host = couchdb.host;
+                        user.created_at = Date.now();
+
+                        user.save(function (err) {
+                            common.initAccount(user.haroo_id, couchdb);
+
+                            setCloudToken(req.ip, appConfig.name, user.haroo_id, function (err, cloudToken) {
+                                var result = setDataToClient(user, cloudToken);
+
+                                callback(err, result);
+                            });
+                        });
+                    }
+                });
+            }
         });
     }));
 

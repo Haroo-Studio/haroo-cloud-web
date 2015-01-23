@@ -385,11 +385,11 @@ exports.updatePasswordForReset = function (req, res, next) {
 
 // Init password form for external auth user
 exports.needPasswordForm = function (req, res) {
-    if (!req.user._id) return res.redirect('back');
+    if (!req.user.email) return res.redirect('back');
 
     var Account = require('../model/account');
 
-    Account.findById(req.user._id, function (err, userForInit) {
+    Account.findOne({ email: req.user.email, haroo_id: req.user.haroo_id }, function (err, userForInit) {
         console.log(userForInit);
         if (!userForInit || userForInit.password) {
             req.flash('errors', { msg: 'Invalid Account or Already Exist Password!' });
@@ -413,7 +413,7 @@ exports.needPasswordForInit = function (req, res, next) {
 
     var Account = require('../model/account');
 
-    Account.findById(req.user._id, function (err, userForInit) {
+    Account.findOne({ email: req.user.email, haroo_id: req.user.haroo_id }, function (err, userForInit) {
         if (!userForInit || userForInit.password) {
             req.flash('errors', { msg: 'Invalid Account or Already Exist Password!' });
             return res.redirect('back');
