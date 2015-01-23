@@ -6,7 +6,8 @@ var AccountLog = require('./accountLog');
 
 var ROUTE = {
     account: {
-        login: "/api/account/login"
+        login: "/api/account/login",
+        signup: "/api/account/create"
     }
 };
 
@@ -114,28 +115,28 @@ exports.login = function(req, res) {
     var appConfig = req.config.app;
     var uri = appConfig.api.secure ? "https://" : "http://" + appConfig.api.entryPoint + ROUTE.account.login;
 
-    request.post(uri, {form: {email: req.body.email, password: req.body.password}}, function (err, response, body) {
-        //err, user, info
+    request.post(uri, {
+        form: {
+            email: req.body.email,
+            password: req.body.password
+        }
+    }, function (err, response, body) {
         var result = JSON.parse(body);
 
         if (err || !response.statusCode) {
             console.error('communication with api server :', err);
 
-            req.flash('errors', { msg: err || "communication failed with api server :" });
+            req.flash('errors', {msg: err || "communication failed with api server :"});
 
             return res.redirect('/login');
         } else {
             if (result.statusCode == 200 && result.data.email == req.body.email && result.data.haroo_id) {
-                console.log(req.session && req.session.returnTo ? req.session.returnTo : 'nothing to return');
-
                 req.login(result.data);
 
                 AccountLog.login({email: result.data.email});
 
                 return res.redirect((req.session && req.session.returnTo && req.session.returnTo != undefined) ? req.session.returnTo : '/dashboard');
             } else {
-                console.error('login with api server :', err);
-
                 req.flash('errors', {msg: result.message});
 
                 return res.redirect('/login');
@@ -161,40 +162,49 @@ exports.signUpForm = function (req, res) {
 };
 
 exports.signUp = function (req, res, next) {
-    req.assert('email', 'Email is not valid').isEmail();
-    req.assert('password', 'Password must be at least 4 characters long').len(4);
-    //req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
+    req.checkBody('email', 'Email is not valid').isEmail();
+    req.checkBody('password', 'Password must be at least 4 characters long').len(4);
 
     var errors = req.validationErrors();
 
     if (errors) {
-        console.log(errors);
         req.flash('errors', errors);
         return res.redirect('back');
     }
 
-    var params = {
-        email: req.param('email'),
-        password: req.param('password'),
-        nickname: req.param('nickname'),
-        database: database,
-        fromWeb: true
-    };
+    var appConfig = req.config.app;
+    var uri = appConfig.api.secure ? "https://" : "http://" + appConfig.api.entryPoint + ROUTE.account.signup;
 
-    Account.createByEmail(params, function (result, user) {
-        console.log(result);
-        if (result.code != Code.account.create.done.code) {
-            req.flash('errors', {msg: result.msg});
-            res.redirect('back');
+    request.post(uri, {
+        form: {
+            email: req.body.email,
+            password: req.body.password,
+            nickname: req.body.nickname,
+            client_id: "cloud-web"
+        }
+    }, function (err, response, body) {
+        var result = JSON.parse(body);
+
+        if (err || !response.statusCode) {
+            console.error('communication with api server :', err);
+
+            req.flash('errors', {msg: err || "communication failed with api server :"});
+
+            return res.redirect('/back');
         } else {
-            req.logIn(user, function (err) {
-                if (err) {
-                    req.flash('errors', {msg: err});
-                    res.redirect('back');
-                } else {
-                    res.redirect('/');
-                }
-            });
+            if (result.statusCode == 200 && result.data.email == req.body.email && result.data.haroo_id) {
+                req.login(result.data);
+
+                AccountLog.login({email: result.data.email});
+
+                return res.redirect('/');
+            } else {
+                console.error('login with api server :', err);
+
+                req.flash('errors', {msg: result.message});
+
+                return res.redirect('/back');
+            }
         }
     });
 };
