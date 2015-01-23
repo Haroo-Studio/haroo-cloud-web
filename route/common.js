@@ -48,6 +48,7 @@ exports.userSession = function () {
         };
 
         req.isAuthenticated = function () {
+            console.log(req.session.user);
             return !!req.session.user;
         };
 

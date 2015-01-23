@@ -49,7 +49,7 @@ function PassportConfig(appConfig, passportConf, couchdb) {
                     user.profile.picture = profile._json.profile_image_url;
 
                     user.haroo_id = common.initHarooID(user.email, couchdb);
-                    user.client_id = 'public homepage';
+                    user.client_id = 'cloud-web-auth';
                     user.db_host = couchdb.host;
                     user.created_at = Date.now();
 
@@ -89,7 +89,7 @@ function PassportConfig(appConfig, passportConf, couchdb) {
                     user.profile.location = (profile._json.location) ? profile._json.location.name : '';
 
                     user.haroo_id = common.initHarooID(user.email, couchdb);
-                    user.client_id = 'public homepage';
+                    user.client_id = 'cloud-web-auth';
                     user.db_host = couchdb.host;
                     user.created_at = Date.now();
 
@@ -127,7 +127,7 @@ function PassportConfig(appConfig, passportConf, couchdb) {
                     user.profile.picture = profile._json.picture;
 
                     user.haroo_id = common.initHarooID(user.email, couchdb);
-                    user.client_id = 'public homepage';
+                    user.client_id = 'cloud-web-auth';
                     user.db_host = couchdb.host;
                     user.created_at = Date.now();
 
