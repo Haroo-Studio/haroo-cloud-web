@@ -7,6 +7,16 @@ var Account = require('../model/account');
 var common = require('./common');
 
 function PassportConfig(appConfig, passportConf, couchdb) {
+    // Should be existed
+    passport.serializeUser(function(user, callback) {
+        callback(null, user.id);
+    });
+
+    passport.deserializeUser(function(id, callback) {
+        Account.findById(id, function(err, user) {
+            callback(err, user);
+        });
+    });
 
     // Sign in with Twitter.
     passport.use(new TwitterStrategy(passportConf['twitter'], function (req, accessToken, tokenSecret, profile, callback) {
@@ -39,8 +49,8 @@ function PassportConfig(appConfig, passportConf, couchdb) {
                     user.profile.picture = profile._json.profile_image_url;
 
                     user.haroo_id = common.initHarooID(user.email, couchdb);
-                    user.from_web = 'public homepage';
-                    user.db_host = couchdb.couch.host;
+                    user.client_id = 'public homepage';
+                    user.db_host = couchdb.host;
                     user.created_at = Date.now();
 
                     user.save(function (err) {
@@ -79,8 +89,8 @@ function PassportConfig(appConfig, passportConf, couchdb) {
                     user.profile.location = (profile._json.location) ? profile._json.location.name : '';
 
                     user.haroo_id = common.initHarooID(user.email, couchdb);
-                    user.from_web = 'public homepage';
-                    user.db_host = couchdb.couch.host;
+                    user.client_id = 'public homepage';
+                    user.db_host = couchdb.host;
                     user.created_at = Date.now();
 
                     user.save(function (err) {
@@ -117,8 +127,8 @@ function PassportConfig(appConfig, passportConf, couchdb) {
                     user.profile.picture = profile._json.picture;
 
                     user.haroo_id = common.initHarooID(user.email, couchdb);
-                    user.from_web = 'public homepage';
-                    user.db_host = couchdb.couch.host;
+                    user.client_id = 'public homepage';
+                    user.db_host = couchdb.host;
                     user.created_at = Date.now();
 
                     user.save(function (err) {
@@ -131,7 +141,7 @@ function PassportConfig(appConfig, passportConf, couchdb) {
         });
     }));
 
-    //todo: github
+    //todo: bind github account
 }
 
 module.exports = PassportConfig;

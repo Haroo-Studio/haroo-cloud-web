@@ -45,17 +45,14 @@ exports.linkExternalAccount = function (req, res, next) {
         if (!user) {
             return res.redirect(redirect.fail);
         }
-        req.logIn(user, function (err) {
-            if (err) {
-                return next(err);
-            }
 
-            //Common.saveAccountLinkLog(provider, user.email);
+        req.login(user);
 
-            // clear client session
-            req.session.clientRoute = null;
-            return res.redirect(redirect.success);
-        });
+        AccountLog.externalLink(provider, {email: user.email});
+
+        // clear client session
+        req.session.clientRoute = null;
+        return res.redirect(redirect.success);
     })(req, res, next);
 
 };
@@ -95,12 +92,14 @@ exports.unlinkExternalAccount = function (req, res) {
     });
 };
 
+// Login form
 exports.loginForm = function (req, res) {
     var params = {};
     if (req.isAuthenticated()) return res.redirect('/');
     res.render('login', params);
 };
 
+// Login from web page
 exports.login = function(req, res) {
     req.checkBody('email', 'Email is not valid').isEmail();
     req.checkBody('password', 'Password cannot be blank').notEmpty();
@@ -129,38 +128,42 @@ exports.login = function(req, res) {
             req.flash('errors', {msg: err || "communication failed with api server :"});
 
             return res.redirect('/login');
-        } else {
-            if (result.statusCode == 200 && result.data.email == req.body.email && result.data.haroo_id) {
-                req.login(result.data);
-
-                AccountLog.login({email: result.data.email});
-
-                return res.redirect((req.session && req.session.returnTo && req.session.returnTo != undefined) ? req.session.returnTo : '/dashboard');
-            } else {
-                req.flash('errors', {msg: result.message});
-
-                return res.redirect('/login');
-            }
         }
+
+        if (result.statusCode != 200 || result.data.email != req.body.email || !result.data.haroo_id) {
+            req.flash('errors', {msg: result.message});
+
+            return res.redirect('/login');
+        }
+
+        req.login(result.data);
+
+        AccountLog.login({email: result.data.email});
+
+        return res.redirect((req.session && req.session.returnTo && req.session.returnTo != undefined) ? req.session.returnTo : '/dashboard');
     });
 };
 
+// Just logout
 exports.logout = function(req, res) {
     if (req.isAuthenticated()) {
         var userEmail = req.session.user['email'];
         AccountLog.logout({email: userEmail});
     }
+
     req.session.returnTo = '';
     req.logout();
     res.redirect('/');
 };
 
+// Sign up form
 exports.signUpForm = function (req, res) {
     var params = {};
     if (req.isAuthenticated()) return res.redirect('/');
     res.render('signup', params);
 };
 
+// Sign up from web page
 exports.signUp = function (req, res, next) {
     req.checkBody('email', 'Email is not valid').isEmail();
     req.checkBody('password', 'Password must be at least 4 characters long').len(4);
@@ -191,21 +194,21 @@ exports.signUp = function (req, res, next) {
             req.flash('errors', {msg: err || "communication failed with api server :"});
 
             return res.redirect('/back');
-        } else {
-            if (result.statusCode == 200 && result.data.email == req.body.email && result.data.haroo_id) {
-                req.login(result.data);
-
-                AccountLog.login({email: result.data.email});
-
-                return res.redirect('/');
-            } else {
-                console.error('login with api server :', err);
-
-                req.flash('errors', {msg: result.message});
-
-                return res.redirect('/back');
-            }
         }
+
+        if (result.statusCode != 200 || result.data.email != req.body.email || !result.data.haroo_id) {
+            console.error('login with api server :', err);
+
+            req.flash('errors', {msg: result.message});
+
+            return res.redirect('/back');
+        }
+
+        req.login(result.data);
+
+        AccountLog.login({email: result.data.email});
+
+        return res.redirect('/');
     });
 };
 
@@ -276,23 +279,6 @@ exports.deleteAccount = function(req, res, next) {
         req.logout();
         req.flash('info', { msg: 'Your account has been deleted.' });
         res.redirect('/');
-    });
-};
-
-//deprecated
-exports.unlinkAccount = function(req, res, next) {
-    var provider = req.param('provider');
-    Account.findById(req.user.id, function(err, user) {
-        if (err) return next(err);
-
-        user[provider] = undefined;
-        user.tokens = _.reject(user.tokens, function(token) { return token.kind === provider; });
-
-        user.save(function(err) {
-            if (err) return next(err);
-            req.flash('info', { msg: provider + ' account has been unlinked.' });
-            res.redirect('/account');
-        });
     });
 };
 
