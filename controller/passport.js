@@ -61,7 +61,7 @@ function PassportConfig(appConfig, passportConf, couchdb) {
             // Is linked User
             if (existingUser) {
                 // make new account token
-                setCloudToken(req.ip, appConfig.name, existingUser.haroo_id, function (err, cloudToken) {
+                setCloudToken(req.ip, appConfig.name + '-twitter', existingUser.haroo_id, function (err, cloudToken) {
                     var result = setDataToClient(existingUser, cloudToken);
 
                     callback(err, result);
@@ -83,7 +83,7 @@ function PassportConfig(appConfig, passportConf, couchdb) {
                         // Link with Twitter
                         existingEmailUser.save(function (err) {
                             // make new account token
-                            setCloudToken(req.ip, appConfig.name, existingEmailUser.haroo_id, function (err, cloudToken) {
+                            setCloudToken(req.ip, appConfig.name + '-twitter', existingEmailUser.haroo_id, function (err, cloudToken) {
                                 var result = setDataToClient(existingEmailUser, cloudToken);
 
                                 callback(err, result);
@@ -111,7 +111,7 @@ function PassportConfig(appConfig, passportConf, couchdb) {
                             common.initAccount(user.haroo_id, couchdb);
 
                             // make new account token
-                            setCloudToken(req.ip, appConfig.name, user.haroo_id, function (err, cloudToken) {
+                            setCloudToken(req.ip, appConfig.name + '-twitter', user.haroo_id, function (err, cloudToken) {
                                 var result = setDataToClient(user, cloudToken);
 
                                 callback(err, result);
@@ -128,7 +128,7 @@ function PassportConfig(appConfig, passportConf, couchdb) {
         Account.findOne({facebook: profile.id}, function (err, existingUser) {
 
             if (existingUser) {
-                setCloudToken(req.ip, appConfig.name, existingUser.haroo_id, function (err, cloudToken) {
+                setCloudToken(req.ip, appConfig.name + '-facebook', existingUser.haroo_id, function (err, cloudToken) {
                     var result = setDataToClient(existingUser, cloudToken);
 
                     callback(err, result);
@@ -149,7 +149,7 @@ function PassportConfig(appConfig, passportConf, couchdb) {
 
                         // Link with Facebook
                         existingEmailUser.save(function (err) {
-                            setCloudToken(req.ip, appConfig.name, existingEmailUser.haroo_id, function (err, cloudToken) {
+                            setCloudToken(req.ip, appConfig.name + '-facebook', existingEmailUser.haroo_id, function (err, cloudToken) {
                                 var result = setDataToClient(existingEmailUser, cloudToken);
 
                                 callback(err, result);
@@ -175,7 +175,7 @@ function PassportConfig(appConfig, passportConf, couchdb) {
                         user.save(function (err) {
                             common.initAccount(user.haroo_id, couchdb);
 
-                            setCloudToken(req.ip, appConfig.name, user.haroo_id, function (err, cloudToken) {
+                            setCloudToken(req.ip, appConfig.name + '-facebook', user.haroo_id, function (err, cloudToken) {
                                 var result = setDataToClient(user, cloudToken);
 
                                 callback(err, result);
@@ -192,7 +192,7 @@ function PassportConfig(appConfig, passportConf, couchdb) {
         Account.findOne({google: profile.id}, function (err, existingUser) {
 
             if (existingUser) {
-                setCloudToken(req.ip, appConfig.name, existingUser.haroo_id, function (err, cloudToken) {
+                setCloudToken(req.ip, appConfig.name + '-google', existingUser.haroo_id, function (err, cloudToken) {
                     var result = setDataToClient(existingUser, cloudToken);
 
                     callback(err, result);
@@ -212,7 +212,7 @@ function PassportConfig(appConfig, passportConf, couchdb) {
 
                         // Link with Google+
                         existingEmailUser.save(function (err) {
-                            setCloudToken(req.ip, appConfig.name, existingEmailUser.haroo_id, function (err, cloudToken) {
+                            setCloudToken(req.ip, appConfig.name + '-google', existingEmailUser.haroo_id, function (err, cloudToken) {
                                 var result = setDataToClient(existingEmailUser, cloudToken);
 
                                 callback(err, result);
@@ -237,7 +237,7 @@ function PassportConfig(appConfig, passportConf, couchdb) {
                         user.save(function (err) {
                             common.initAccount(user.haroo_id, couchdb);
 
-                            setCloudToken(req.ip, appConfig.name, user.haroo_id, function (err, cloudToken) {
+                            setCloudToken(req.ip, appConfig.name + '-google', user.haroo_id, function (err, cloudToken) {
                                 var result = setDataToClient(user, cloudToken);
 
                                 callback(err, result);
