@@ -24,7 +24,7 @@ exports.redirectPrev = function () {
 exports.globalLocals = function (config) {
     // Make user object available in templates.
     return function(req, res, callback) {
-        res.locals.user = req.session.user;
+        req.user = res.locals.user = req.session.user;
         res.locals.site = {
             title: config.app.title,
             url: config.server.host,
@@ -48,8 +48,11 @@ exports.userSession = function () {
         };
 
         req.isAuthenticated = function () {
-            console.log(req.session.user);
             return !!req.session.user;
+        };
+
+        req.isPassword = function () {
+            return !!req.session.user.password;
         };
 
         callback();

@@ -11,7 +11,7 @@ var accountSchema = new mongoose.Schema({
     created_at: Date,
     updated_at: Date,
 
-    client_id: String,
+    join_from: String,
     facebook: String,
     twitter: String,
     google: String,

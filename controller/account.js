@@ -7,7 +7,8 @@ var AccountLog = require('./accountLog');
 var ROUTE = {
     account: {
         login: "/api/account/login",
-        signup: "/api/account/create"
+        signup: "/api/account/create",
+        updatePassword: ["/api/account/", "/change_password"]
     }
 };
 
@@ -15,6 +16,8 @@ var ROUTE = {
 // Login Required middleware.
 exports.isAuthenticated = function(req, res, callback) {
     if (req.isAuthenticated()) return callback();
+    if (!req.isPassword()) return res.redirect('/account/need-password');
+
     res.redirect('/login');
 };
 
@@ -52,6 +55,9 @@ exports.linkExternalAccount = function (req, res, next) {
 
         // clear client session
         req.session.clientRoute = null;
+
+        if (!req.isPassword()) return res.redirect('/account/need-password');
+
         return res.redirect(redirect.success);
     })(req, res, next);
 
@@ -285,6 +291,7 @@ exports.deleteAccount = function(req, res, next) {
 exports.resetPasswordForm = function (req, res) {
     var params = {};
     if (req.isAuthenticated()) return res.redirect('/');
+
     res.render('reset-password', params);
 };
 
@@ -324,26 +331,52 @@ exports.resetPassword = function (req, res) {
 };
 
 exports.updatePasswordForm = function (req, res) {
-    if (req.isAuthenticated()) return res.redirect('/');
+    if (req.isAuthenticated() && req.isPassword()) return res.redirect('/');
 
-    req.assert('token', 'Secret token cannot be empty').notEmpty();
+    if (req.params.token) {
+        Account.findOne({ reset_password_token: req.params.token})
+            .where('reset_password_token_expire').gt(Date.now())
+            .exec(function(err, user) {
+                if (!user) {
+                    req.flash('errors', { msg: 'Password reset token is invalid or has expired.' });
+                    return res.redirect('/account/reset-password');
+                }
+                res.render('update-password', { updateType: "reset", userAccount: user });
+            });
+    } else {
+        res.render('update-password', { updateType: "init", userAccount: req.user });
+    }
+};
+
+exports.updatePasswordForInit = function (req, res, next) {
+    req.checkBody('password', 'Password must be at least 4 characters long.').len(4);
 
     var errors = req.validationErrors();
 
     if (errors) {
-        req.flash('info', { msg: 'Token is not valid' });
-        return res.redirect('/login');
+        req.flash('errors', errors);
+        return res.redirect('back');
     }
 
-    Account.findOne({ reset_password_token: req.param('token')})
-        .where('reset_password_token_expire').gt(Date.now())
-        .exec(function(err, user) {
-            if (!user) {
-                req.flash('errors', { msg: 'Password reset token is invalid or has expired.' });
-                return res.redirect('/account/reset-password');
-            }
-            res.render('update-password', { resetAccount: user });
+    var Account = require('../model/account');
+
+    Account.findById(req.user._id, function (err, userForInit) {
+        if (!userForInit || userForInit.password) {
+            req.flash('errors', { msg: 'Invalid Account or Already Exist Password!' });
+            return res.redirect('back');
+        }
+
+        userForInit.password = req.body.password;
+
+        // force Login process
+        userForInit.save(function(err) {
+            if (err) return res.redirect('back');
+
+            req.login(userForInit);
+
+            res.redirect('/dashboard');
         });
+    });
 };
 
 exports.updatePasswordForReset = function (req, res, next) {

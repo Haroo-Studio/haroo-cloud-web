@@ -10,6 +10,8 @@ router.get('/logout', account.logout);
 router.get('/signup', account.signUpForm);
 router.post('/signup', account.signUp);
 
+router.get('/account/need-password', account.updatePasswordForm);
+router.post('/account/need-password', account.updatePasswordForInit);
 router.get('/account/reset-password', account.resetPasswordForm);
 router.post('/account/reset-password', account.resetPassword);
 router.get('/account/update-password/:token?', account.updatePasswordForm);
