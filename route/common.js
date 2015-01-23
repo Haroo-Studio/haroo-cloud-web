@@ -40,6 +40,7 @@ exports.userSession = function () {
     // Bind login, logout for user session
     return function (req, res, callback) {
         req.login = function (user) {
+            console.log('user for login :', user);
             req.session.user = user;
         };
 

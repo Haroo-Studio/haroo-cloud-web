@@ -49,6 +49,7 @@ exports.linkExternalAccount = function (req, res, next) {
             return res.redirect(redirect.fail);
         }
 
+        // todo: get token, if already exist password, just request login ==> cant, cuz no raw password
         req.login(user);
 
         AccountLog.externalLink(provider, {email: user.email});
@@ -246,6 +247,7 @@ exports.updateProfile = function (req, res) {
     });
 };
 
+// will be deprecated
 exports.updatePassword = function (req, res, next) {
     req.assert('password', 'Password must be at least 4 characters long').len(4);
     //req.assert('confirmPassword', 'Passwords do not match').equals(req.param('password'));
@@ -331,52 +333,19 @@ exports.resetPassword = function (req, res) {
 };
 
 exports.updatePasswordForm = function (req, res) {
-    if (req.isAuthenticated() && req.isPassword()) return res.redirect('/');
-
-    if (req.params.token) {
-        Account.findOne({ reset_password_token: req.params.token})
-            .where('reset_password_token_expire').gt(Date.now())
-            .exec(function(err, user) {
-                if (!user) {
-                    req.flash('errors', { msg: 'Password reset token is invalid or has expired.' });
-                    return res.redirect('/account/reset-password');
-                }
-                res.render('update-password', { updateType: "reset", userAccount: user });
-            });
-    } else {
-        res.render('update-password', { updateType: "init", userAccount: req.user });
-    }
-};
-
-exports.updatePasswordForInit = function (req, res, next) {
-    req.checkBody('password', 'Password must be at least 4 characters long.').len(4);
-
-    var errors = req.validationErrors();
-
-    if (errors) {
-        req.flash('errors', errors);
-        return res.redirect('back');
-    }
+    if (req.isAuthenticated() || !req.params.token) return res.redirect('/');
 
     var Account = require('../model/account');
 
-    Account.findById(req.user._id, function (err, userForInit) {
-        if (!userForInit || userForInit.password) {
-            req.flash('errors', { msg: 'Invalid Account or Already Exist Password!' });
-            return res.redirect('back');
-        }
-
-        userForInit.password = req.body.password;
-
-        // force Login process
-        userForInit.save(function(err) {
-            if (err) return res.redirect('back');
-
-            req.login(userForInit);
-
-            res.redirect('/dashboard');
+    Account.findOne({ reset_password_token: req.params.token})
+        .where('reset_password_token_expire').gt(Date.now())
+        .exec(function(err, user) {
+            if (!user) {
+                req.flash('errors', { msg: 'Password reset token is invalid or has expired.' });
+                return res.redirect('/account/reset-password');
+            }
+            res.render('update-password', { updateType: "reset", userAccount: user });
         });
-    });
 };
 
 exports.updatePasswordForReset = function (req, res, next) {
@@ -412,4 +381,55 @@ exports.updatePasswordForReset = function (req, res, next) {
                 });
             });
         });
+};
+
+// Init password form for external auth user
+exports.needPasswordForm = function (req, res) {
+    if (!req.user._id) return res.redirect('back');
+
+    var Account = require('../model/account');
+
+    Account.findById(req.user._id, function (err, userForInit) {
+        console.log(userForInit);
+        if (!userForInit || userForInit.password) {
+            req.flash('errors', { msg: 'Invalid Account or Already Exist Password!' });
+            return res.redirect('back');
+        }
+
+        res.render('update-password', { updateType: "init", userAccount: req.user });
+    });
+};
+
+// Init password for external auth user
+exports.needPasswordForInit = function (req, res, next) {
+    req.checkBody('password', 'Password must be at least 4 characters long.').len(4);
+
+    var errors = req.validationErrors();
+
+    if (errors) {
+        req.flash('errors', errors);
+        return res.redirect('back');
+    }
+
+    var Account = require('../model/account');
+
+    Account.findById(req.user._id, function (err, userForInit) {
+        if (!userForInit || userForInit.password) {
+            req.flash('errors', { msg: 'Invalid Account or Already Exist Password!' });
+            return res.redirect('back');
+        }
+
+        userForInit.password = req.body.password;
+
+        // force Login process
+        userForInit.save(function(err) {
+            if (err) return res.redirect('back');
+
+            // todo: save token, request login and get token
+
+            req.login(userForInit);
+
+            res.redirect('/dashboard');
+        });
+    });
 };

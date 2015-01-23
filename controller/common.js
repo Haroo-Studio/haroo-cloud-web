@@ -74,6 +74,10 @@ exports.getAccessToken = function () {
     return uuid.v4();
 };
 
+exports.getRandomToken = function () {
+    return uuid.v1();
+};
+
 exports.getGravatarUrl = function (param) {
     var option = {
         size: param.size && param.size,
@@ -88,16 +92,12 @@ exports.getGravatarUrl = function (param) {
         + (option.default ? 'd=' + option.default + '' : '');
 };
 
-exports.getRandomToken = function () {
-    return uuid.v1();
-};
-
 exports.getDefaultPublicUserID = function () {
     // reason why cuid is simple & fast, timebase, machinebase, no need uuid type.
     return cuid();
 };
 
-exports.getExpireDate = function () {
+exports.getLoginExpireDate = function () {
     return Date.now() + ( 15 * DAY );
 };
 
