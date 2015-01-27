@@ -3,7 +3,7 @@ var TwitterStrategy = require('passport-twitter').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
-var common = require('./common');
+var Common = require('./common');
 var Account = require('../model/account');
 var AccountToken = require('../model/accountToken');
 
@@ -31,9 +31,9 @@ function setCloudToken(ip, hostname, haroo_id, callback) {
     var cloudToken = new AccountToken({
         access_ip: ip,
         access_host: hostname,
-        access_token: common.getAccessToken(),
+        access_token: Common.getAccessToken(),
         haroo_id: haroo_id,
-        login_expire: common.getLoginExpireDate(),
+        login_expire: Common.getLoginExpireDate(),
         created_at: Date.now()
     });
 
@@ -102,13 +102,13 @@ function PassportConfig(appConfig, passportConf, couchdb) {
                         user.profile.location = profile._json.location;
                         user.profile.picture = profile._json.profile_image_url;
 
-                        user.haroo_id = common.initHarooID(user.email, couchdb);
+                        user.haroo_id = Common.initHarooID(user.email, couchdb);
                         user.join_from = 'cloud-web-auth';
                         user.db_host = couchdb.host;
                         user.created_at = Date.now();
 
                         user.save(function (err) {
-                            common.initAccount(user.haroo_id, couchdb);
+                            Common.initAccount(user.haroo_id, couchdb);
 
                             // make new account token
                             setCloudToken(req.ip, appConfig.name + '-twitter', user.haroo_id, function (err, cloudToken) {
@@ -167,13 +167,13 @@ function PassportConfig(appConfig, passportConf, couchdb) {
                         user.profile.picture = 'https://graph.facebook.com/' + profile.id + '/picture?type=large';
                         user.profile.location = (profile._json.location) ? profile._json.location.name : '';
 
-                        user.haroo_id = common.initHarooID(user.email, couchdb);
+                        user.haroo_id = Common.initHarooID(user.email, couchdb);
                         user.join_from = 'cloud-web-auth';
                         user.db_host = couchdb.host;
                         user.created_at = Date.now();
 
                         user.save(function (err) {
-                            common.initAccount(user.haroo_id, couchdb);
+                            Common.initAccount(user.haroo_id, couchdb);
 
                             setCloudToken(req.ip, appConfig.name + '-facebook', user.haroo_id, function (err, cloudToken) {
                                 var result = setDataToClient(user, cloudToken);
@@ -229,13 +229,13 @@ function PassportConfig(appConfig, passportConf, couchdb) {
                         user.profile.gender = profile._json.gender;
                         user.profile.picture = profile._json.picture;
 
-                        user.haroo_id = common.initHarooID(user.email, couchdb);
+                        user.haroo_id = Common.initHarooID(user.email, couchdb);
                         user.join_from = 'cloud-web-auth';
                         user.db_host = couchdb.host;
                         user.created_at = Date.now();
 
                         user.save(function (err) {
-                            common.initAccount(user.haroo_id, couchdb);
+                            Common.initAccount(user.haroo_id, couchdb);
 
                             setCloudToken(req.ip, appConfig.name + '-google', user.haroo_id, function (err, cloudToken) {
                                 var result = setDataToClient(user, cloudToken);

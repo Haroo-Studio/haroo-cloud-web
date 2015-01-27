@@ -1,7 +1,10 @@
+var nano = require('nano');
 var async = require('async');
 var request = require('request');
 
-var database = require('../config/database');
+var Common = require('./common');
+var Account = require('../model/account');
+var AccountToken = require('../model/accountToken');
 
 function getPageParams (totalCount, nowPage, pageSize, pageGutter) {
     var params = {};
@@ -17,13 +20,15 @@ function getPageParams (totalCount, nowPage, pageSize, pageGutter) {
 }
 
 exports.index = function (req, res) {
+    var databaseConfig = req.config.database;
+
     var params = {
         haroo_id: req.user.haroo_id,
         isGravatar: true,
-        gravatar: Common.getGravatar({ email: req.user.email || '', default: 'mm', size: '80'}),
+        gravatar: Common.getGravatarUrl({ email: req.user.email || '', default: 'mm', size: '80'}),
         list: [],
-        type: req.param('t'),
-        page: req.param('p') || 1,
+        type: req.query.t,
+        page: req.query.p || 1,
         pageSize: 20,
         pageGutter: 10
     };
@@ -38,7 +43,7 @@ exports.index = function (req, res) {
     });
 */
 
-    var couch = nano.db.use(params.haroo_id);
+    var couch = nano({url: 'http://' + databaseConfig.couch[0].host}).use(params.haroo_id);
 
     async.parallel([
             function (callback) {
@@ -61,12 +66,12 @@ exports.index = function (req, res) {
             },
             function (callback) {
                 // get token info
-                AccountToken.listByHarooID({haroo_id: params.haroo_id}, function (result) {
-                    if (result['list']) {
-                        callback(null, result.list);
-                    } else {
-                        callback(result['msg']);
+                AccountToken.find({haroo_id: params.haroo_id}, function (err, tokenList) {
+                    if (err) {
+                        return callback(err);
                     }
+
+                    callback(null, tokenList);
                 });
             }],
         function (err, results) {
