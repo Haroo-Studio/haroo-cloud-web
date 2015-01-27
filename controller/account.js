@@ -206,7 +206,7 @@ exports.signUp = function (req, res, next) {
         if (result.statusCode != 200 || result.data.email != req.body.email || !result.data.haroo_id) {
             console.error('login with api server :', err);
 
-            req.flash('errors', {msg: result.message});
+            req.flash('errors', {msg: result.meta.message});
 
             return res.redirect('/back');
         }
@@ -385,7 +385,7 @@ exports.updatePasswordForReset = function (req, res, next) {
 
 // Init password form for external auth user
 exports.needPasswordForm = function (req, res) {
-    if (!req.user.email) return res.redirect('back');
+    if (!(req.user && req.user.email)) return res.redirect('back');
 
     var Account = require('../model/account');
 

@@ -53,7 +53,7 @@ exports.userSession = function () {
         };
 
         req.isPassword = function () {
-            return !!req.session.user.password;
+            return !!(req.session.user && req.session.user.password);
         };
 
         callback();
