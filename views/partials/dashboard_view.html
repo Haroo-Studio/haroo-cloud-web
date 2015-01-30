@@ -32,6 +32,6 @@
         </div>
     </div>
 
-    <div class="haroonote-content-body">{{ item.doc['markdown'] }}</div>
-    <div class="haroonote-content-toc">{{ item.doc['toc'].markdown }}</div>
+    <div class="haroonote-content-body">{{ item.doc['html']|safe }}</div>
+    <div class="haroonote-content-toc">{{ item.doc['toc'].html|safe }}</div>
 </div>
