@@ -186,6 +186,9 @@ exports.signUp = function (req, res, next) {
     var uri = appConfig.api.secure ? "https://" : "http://" + appConfig.api.entryPoint + ROUTE.account.signup;
 
     request.post(uri, {
+        headers: {
+            "x-access-host": "haroo-cloud-web"
+        },
         form: {
             email: req.body.email,
             password: req.body.password,
@@ -390,7 +393,6 @@ exports.needPasswordForm = function (req, res) {
     var Account = require('../model/account');
 
     Account.findOne({ email: req.user.email, haroo_id: req.user.haroo_id }, function (err, userForInit) {
-        console.log(userForInit);
         if (!userForInit || userForInit.password) {
             req.flash('errors', { msg: 'Invalid Account or Already Exist Password!' });
             return res.redirect('back');

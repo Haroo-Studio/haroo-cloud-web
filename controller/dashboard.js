@@ -6,6 +6,12 @@ var Common = require('./common');
 var Account = require('../model/account');
 var AccountToken = require('../model/accountToken');
 
+var ROUTE = {
+    documents: {
+        read: "/api/documents"
+    }
+};
+
 function getPageParams (totalCount, nowPage, pageSize, pageGutter) {
     var params = {};
 
@@ -27,8 +33,9 @@ exports.index = function (req, res) {
         isGravatar: true,
         gravatar: Common.getGravatarUrl({ email: req.user.email || '', default: 'mm', size: '80'}),
         list: [],
-        type: req.query.t,
-        page: req.query.p || 1,
+        type: req.query['t'],
+        page: req.query['p'] || 1,
+        order: req.query['s'],
         pageSize: 20,
         pageGutter: 10
     };
@@ -47,12 +54,25 @@ exports.index = function (req, res) {
 
     async.parallel([
             function (callback) {
-                couch.view(listType, orderType, {include_docs:true},  function (err, result) {
-                    if (!err) {
-                        callback(null, result.rows);
-                    } else {
-                        callback(err);
+                var appConfig = req.config.app;
+                var uri = appConfig.api.secure ? "https://" : "http://" + appConfig.api.entryPoint + ROUTE.documents.read;
+
+                request.get(uri + '/' + params.haroo_id, {
+                    headers: {
+                        "x-access-token": req.user.access_token,
+                        "x-access-host": "haroo-cloud-web"
+                    },
+                    form: {
+                        type: params.type,
+                        order: params.order
                     }
+                }, function (err, response, body) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    var result = JSON.parse(body);
+
+                    callback(null, result.data);
                 });
             },
             function (callback) {
