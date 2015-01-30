@@ -28,7 +28,7 @@
                     </div>
                     {%- endfor %}
                 </div>
-                <p class="registered"><span class="label">Registered At</span> {{ user.created_at|date('Y-m-d') }}</p>
+                <!--<p class="registered"><span class="label">Registered At</span> {{ user.created_at|date('Y-m-d') }}</p>-->
                 <p class="subscription"><span class="label">Subscribe Type</span> Free Account <span class="quota">{{ '4,483' + 'kB' }} / {{ '5,000' + 'kB' }}</span></p>
             </div>
         </div>
@@ -71,6 +71,7 @@
             </div>
         </div>
 
+        {# just hide for now
         <div class="hero">
             <h4>Update Account Profile</h4>
         </div>
@@ -88,7 +89,7 @@
                 <button type="submit" class="pure-button pure-button-primary">Update</button>
             </div>
         </div>
-
+        #}
         <div class="pure-form pure-form-aligned">
             <table class="pure-table token-list">
                 {% for item in tokenList -%}

@@ -1,0 +1,29 @@
+{
+  "production": {
+    "title": "Haroo Cloud Service Hub",
+    "name": "haroo-cloud-core",
+    "api": {
+      "entryPoint": "core.haroocloud.com",
+      "secure": true
+    },
+    "lang": "en"
+  },
+  "development": {
+    "title": "Haroo Cloud Service Hub",
+    "name": "haroo-cloud-core-dev",
+    "api": {
+      "entryPoint": "localhost:3030",
+      "secure": false
+    },
+    "lang": "ko"
+  },
+  "testing": {
+    "title": "Haroo Cloud Service Hub",
+    "name": "haroo-cloud-core-test",
+    "api": {
+      "entryPoint": "localhost:3030",
+      "secure": false
+    },
+    "lang": "dev"
+  }
+}

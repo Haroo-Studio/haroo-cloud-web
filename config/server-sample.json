@@ -1,0 +1,11 @@
+{
+  "production": {
+    "host": "haroocloud.com", "secure": true, "port": 3031, "log": "combined"
+  },
+  "development": {
+    "host": "localhost", "secure": false, "port": 3031, "log": "dev"
+  },
+  "testing": {
+    "host": "127.0.0.1", "secure": false, "port": 3031, "log": "dev"
+  }
+}

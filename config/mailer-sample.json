@@ -1,11 +1,29 @@
 {
-    "email-token": {
-        "service": "gmail for nodemailer",
-        "auth": {
-            "user": "test your email@gmail.com",
-            "pass": "password"
-        },
-        "bcc": "test coworker email@gmail.com",
-        "reply": ["public name","public replay email"]
+  "production": {
+    "host": "sendmail.haroocloud.com", "auth": ["m", "1"], "port": 25,
+    "delegate": {
+      "service": "gmail",
+      "auth": {
+        "user": "test your email@gmail.com",
+        "pass": "password"
+      },
+      "bcc": "test coworker email@gmail.com",
+      "reply": "Haroo Cloud Service<service@haroopress.com>"
     }
+  },
+  "development": {
+    "host": "sendmail.localhost", "auth": ["m", "1"],
+    "delegate": {
+      "service": "gmail",
+      "auth": {
+        "user": "test your email@gmail.com",
+        "pass": "password"
+      },
+      "bcc": "test coworker email@gmail.com",
+      "reply": "Haroo Cloud Service<service@haroopress.com>"
+    }
+  },
+  "testing": {
+    "host": "sendmail.localhost", "auth": ["m", "1"]
+  }
 }

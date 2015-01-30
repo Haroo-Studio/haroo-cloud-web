@@ -1,8 +1,3 @@
-var markdownIt = window.markdownit('full',{
-    html: true,
-    linkify: true,
-    typographer: true
-});
 var dashboard = {
     id: 1,
     id_max: 0,
@@ -46,10 +41,11 @@ var dashboard = {
         var view = this.content.filter('[data-id=' + viewID + ']').show().children('.haroonote-content-body');
 
         if (!view.hasClass('rendered')) {
-            var markdown = view.html();
-            var rendered = markdownIt.render(markdown);
-            view.addClass('rendered');
-            view.html(rendered);
+            //todo: bind haroopad markdown renderer
+            //var markdown = view.html();
+            //var rendered = markdownIt.render(markdown);
+            //view.addClass('rendered');
+            //view.html(rendered);
         }
     }
 };
@@ -151,7 +147,7 @@ $('document').ready(function () {
         $.cookie('remove-premium-box', '1', { expires: 7, path: '/' });
     });
 
-    // document meta control, disabled for now, don't update from outside
+    // document meta control, disabled for now, don't update core database from outside
     /*
     var viewControl = $main.children().find('.haroonote-content-controls');
     var toggleStr = {
