@@ -41,22 +41,28 @@ router.get('/download', useragent.express(), function (req, res) {
 });
 
 router.get('/get/mac', function (req, res) {
-    res.redirect(config.common['haroopadAppDownloadUrl']['MAC']);
+    var common = req.config.common;
+    res.redirect(common['haroopadAppDownloadUrl']['MAC']);
 });
 router.get('/get/linux', function (req, res) {
-    res.redirect(config.common['haroopadAppDownloadUrl']['LINUX']);
+    var common = req.config.common;
+    res.redirect(common['haroopadAppDownloadUrl']['LINUX']);
 });
 router.get('/get/linux64', function (req, res) {
-    res.redirect(config.common['haroopadAppDownloadUrl']['LINUX64']);
+    var common = req.config.common;
+    res.redirect(common['haroopadAppDownloadUrl']['LINUX64']);
 });
 router.get('/get/linux-deb', function (req, res) {
-    res.redirect(config.common['haroopadAppDownloadUrl']['LINUX-DEB']);
+    var common = req.config.common;
+    res.redirect(common['haroopadAppDownloadUrl']['LINUX-DEB']);
 });
 router.get('/get/linux64-deb', function (req, res) {
-    res.redirect(config.common['haroopadAppDownloadUrl']['LINUX64-DEB']);
+    var common = req.config.common;
+    res.redirect(common['haroopadAppDownloadUrl']['LINUX64-DEB']);
 });
 router.get('/get/windows', function (req, res) {
-    res.redirect(config.common['haroopadAppDownloadUrl']['WINDOWS']);
+    var common = req.config.common;
+    res.redirect(common['haroopadAppDownloadUrl']['WINDOWS']);
 });
 
 router.get('studio/', function (req, res) {
