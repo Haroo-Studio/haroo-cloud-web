@@ -8,7 +8,7 @@ var AccountToken = require('../model/accountToken');
 
 var ROUTE = {
     documents: {
-        read: "/api/documents"
+        read: "/api/document"
     }
 };
 
@@ -99,11 +99,11 @@ exports.index = function (req, res) {
                 console.error('async: ', err);
                 res.render('dashboard', params);
             } else {
-                params.list = results[0].length ? results[0].reverse() : [];
+                params.list = results[0].rows.length ? results[0].rows.reverse() : [];
                 params.tags = results[1].length ? results[1].reverse() : [];
                 params.tokenList = results[2];
 
-                params.page_param = getPageParams(Number(results[0].length), Number(params.page), Number(params.pageSize), Number(params.pageGutter));
+                params.page_param = getPageParams(Number(results[0].rows.length), Number(params.page), Number(params.pageSize), Number(params.pageGutter));
 
                 res.render('dashboard', params);
             }
