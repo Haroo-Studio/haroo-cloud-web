@@ -99,8 +99,8 @@ exports.index = function (req, res) {
                 console.error('async: ', err);
                 res.render('dashboard', params);
             } else {
-                params.list = results[0].reverse();
-                params.tags = results[1].reverse();
+                params.list = results[0].length ? results[0].reverse() : [];
+                params.tags = results[1].length ? results[1].reverse() : [];
                 params.tokenList = results[2];
 
                 params.page_param = getPageParams(Number(results[0].length), Number(params.page), Number(params.pageSize), Number(params.pageGutter));
