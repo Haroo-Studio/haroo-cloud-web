@@ -27,7 +27,7 @@ exports.globalLocals = function (config) {
         req.user = res.locals.user = req.session.user;
         res.locals.site = {
             title: config.app.title,
-            url: config.server.host,
+            url: (config.server.secure ? 'https://' : 'http://') + config.server.host + (config.server.port != '80' ? ':' + config.server.port : ''),
             dbHost: config.database,
             mailHost: config.mailer
         };

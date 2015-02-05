@@ -5,6 +5,7 @@ var request = require('request');
 var Common = require('./common');
 var Account = require('../model/account');
 var AccountToken = require('../model/accountToken');
+var PublicDocument = require('../model/publicDocument');
 
 var ROUTE = {
     documents: {
@@ -127,12 +128,6 @@ exports.documentUpdatePublic = function (req, res) {
 };
 
 exports.documentPublicView = function (req, res) {
-    var md = require('markdown-it')('full', {
-        html: true,
-        linkify: true,
-        typographer: true
-    });
-
     var params = {
         date: req.param('date'),
         counter: Number(req.param('counter')),
@@ -141,18 +136,28 @@ exports.documentPublicView = function (req, res) {
 
     // todo: check session to count
 
-    Document.publicView(nano, params, function (result) {
-        if (result.doc) {
-            result.rendered = md.render(result.doc.markdown);
-
-            if (result.doc.toc) {
-                result.renderedToc = md.render(result.doc.toc.markdown);
-            }
-
-            res.render('document_public_view', result);
-        } else {
+    PublicDocument.findOne({release_date: params.date, counter: params.counter}, function (err, publicDoc) {
+        if (err || !publicDoc || !publicDoc.haroo_id || !publicDoc.document_id) {
             res.status(500).send('NOTHING TO SHOW, PLEASE USE CORRECT PUBLIC URL');
         }
+
+        var couch = nano.db.use(publicDoc['haroo_id']);
+
+        couch.get(publicDoc['document_id'], function (err, document) {
+            if (!document) {
+                res.status(500).send('NOTHING TO SHOW, PLEASE USE CORRECT PUBLIC URL');
+            }
+
+            if (!params['counted']) {
+                publicDoc.viewCount = publicDoc.viewCount ? publicDoc.viewCount + 1 : 1;
+                publicDoc.save();
+            }
+
+            params['result'].doc = document;
+            params['result'].meta = publicDoc;
+
+            res.render('document_public_view', result);
+        });
     });
 };
 
