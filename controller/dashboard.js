@@ -128,10 +128,14 @@ exports.documentUpdatePublic = function (req, res) {
 };
 
 exports.documentPublicView = function (req, res) {
+    var databaseConfig = req.config.database;
+
     var params = {
-        date: req.param('date'),
-        counter: Number(req.param('counter')),
-        counted: false
+        date: req.params.date,
+        counter: Number(req.params.counter),
+        counted: false,
+        doc: null,
+        meta: null
     };
 
     // todo: check session to count
@@ -141,22 +145,22 @@ exports.documentPublicView = function (req, res) {
             res.status(500).send('NOTHING TO SHOW, PLEASE USE CORRECT PUBLIC URL');
         }
 
-        var couch = nano.db.use(publicDoc['haroo_id']);
+        var couch = nano({url: 'http://' + databaseConfig.couch[0].host}).use(publicDoc.haroo_id);
 
-        couch.get(publicDoc['document_id'], function (err, document) {
+        couch.get(publicDoc.document_id, function (err, document) {
             if (!document) {
                 res.status(500).send('NOTHING TO SHOW, PLEASE USE CORRECT PUBLIC URL');
             }
 
-            if (!params['counted']) {
+            if (!params.counted) {
                 publicDoc.viewCount = publicDoc.viewCount ? publicDoc.viewCount + 1 : 1;
                 publicDoc.save();
             }
 
-            params['result'].doc = document;
-            params['result'].meta = publicDoc;
+            params.doc = document;
+            params.meta = publicDoc;
 
-            res.render('document_public_view', result);
+            res.render('document_public_view', params);
         });
     });
 };

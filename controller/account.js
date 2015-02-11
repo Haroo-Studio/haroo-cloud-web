@@ -119,7 +119,7 @@ exports.login = function(req, res) {
     }
 
     var appConfig = req.config.app;
-    var uri = appConfig.api.secure ? "https://" : "http://" + appConfig.api.entryPoint + ROUTE.account.login;
+    var uri = appConfig.api['secure'] ? "https://" : "http://" + appConfig.api['entryPoint'] + ROUTE.account.login;
 
     request.post(uri, {
         headers: {
@@ -186,7 +186,7 @@ exports.signUp = function (req, res, next) {
     }
 
     var appConfig = req.config.app;
-    var uri = appConfig.api.secure ? "https://" : "http://" + appConfig.api.entryPoint + ROUTE.account.signup;
+    var uri = appConfig.api['secure'] ? "https://" : "http://" + appConfig.api['entryPoint'] + ROUTE.account.signup;
 
     request.post(uri, {
         headers: {
