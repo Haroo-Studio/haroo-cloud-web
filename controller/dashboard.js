@@ -3,13 +3,12 @@ var async = require('async');
 var request = require('request');
 
 var Common = require('./common');
-var Account = require('../model/account');
 var AccountToken = require('../model/accountToken');
-var PublicDocument = require('../model/publicDocument');
 
 var ROUTE = {
     documents: {
-        read: "/api/document"
+        read: "/api/document",
+        readPublic: "/api/public/document"
     }
 };
 
@@ -111,6 +110,47 @@ exports.index = function (req, res) {
         });
 };
 
+exports.documentPublicView = function (req, res) {
+
+    var params = {
+        date: req.params.date,
+        counter: Number(req.params.counter),
+        counted: false,
+        doc: null,
+        meta: null
+    };
+
+    // todo: check session to count
+    var appConfig = req.config.app;
+    var uri = appConfig.api.secure ? "https://" : "http://" + appConfig.api.entryPoint + ROUTE.documents.readPublic;
+
+    request.post(uri, {
+        headers: {
+            "x-access-host": "haroo-cloud-web"
+        },
+        form: {
+            date: params.date,
+            counter: params.counter,
+            counted: params.counted
+        }
+    }, function (err, response, body) {
+        if (err) {
+            return res.status(500).send('NOTHING TO SHOW, NO DATA SERVER EXIST');
+        }
+
+        var result = JSON.parse(body);
+
+        if (!result.isResult || result.statusCode != 200 || !result.data) {
+            return res.status(500).send('NOTHING TO SHOW, PLEASE USE CORRECT PUBLIC URL');
+        }
+        params.doc = result.data.doc;
+        params.meta = result.data.meta;
+
+        res.render('document_public_view', params);
+    });
+
+};
+
 exports.documentUpdatePublic = function (req, res) {
     var params = {
         haroo_id: req.user.haroo_id,
@@ -124,44 +164,6 @@ exports.documentUpdatePublic = function (req, res) {
 
     Document.togglePublic(couch, params, function (result) {
         res.send(result);
-    });
-};
-
-exports.documentPublicView = function (req, res) {
-    var databaseConfig = req.config.database;
-
-    var params = {
-        date: req.params.date,
-        counter: Number(req.params.counter),
-        counted: false,
-        doc: null,
-        meta: null
-    };
-
-    // todo: check session to count
-
-    PublicDocument.findOne({release_date: params.date, counter: params.counter}, function (err, publicDoc) {
-        if (err || !publicDoc || !publicDoc.haroo_id || !publicDoc.document_id) {
-            res.status(500).send('NOTHING TO SHOW, PLEASE USE CORRECT PUBLIC URL');
-        }
-
-        var couch = nano({url: 'http://' + databaseConfig.couch[0].host}).use(publicDoc.haroo_id);
-
-        couch.get(publicDoc.document_id, function (err, document) {
-            if (!document) {
-                res.status(500).send('NOTHING TO SHOW, PLEASE USE CORRECT PUBLIC URL');
-            }
-
-            if (!params.counted) {
-                publicDoc.viewCount = publicDoc.viewCount ? publicDoc.viewCount + 1 : 1;
-                publicDoc.save();
-            }
-
-            params.doc = document;
-            params.meta = publicDoc;
-
-            res.render('document_public_view', params);
-        });
     });
 };
 
