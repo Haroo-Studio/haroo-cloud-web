@@ -122,6 +122,9 @@ exports.login = function(req, res) {
     var uri = appConfig.api.secure ? "https://" : "http://" + appConfig.api.entryPoint + ROUTE.account.login;
 
     request.post(uri, {
+        headers: {
+            "x-access-host": "haroo-cloud-web"
+        },
         form: {
             email: req.body.email,
             password: req.body.password
