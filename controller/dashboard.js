@@ -7,7 +7,10 @@ var AccountToken = require('../model/accountToken');
 
 var ROUTE = {
     documents: {
+        push: "/api/push",
+        pull: "/api/pull",
         read: "/api/document",
+        save: "/api/document",
         readPublic: "/api/public/document"
     }
 };
@@ -55,7 +58,7 @@ exports.index = function (req, res) {
     async.parallel([
             function (callback) {
                 var appConfig = req.config.app;
-                var uri = appConfig.api.secure ? "https://" : "http://" + appConfig.api.entryPoint + ROUTE.documents.read;
+                var uri = appConfig.api.secure ? "https://" : "http://" + appConfig.api.entryPoint + ROUTE.documents.pull;
 
                 request.get(uri + '/' + params.haroo_id, {
                     headers: {
