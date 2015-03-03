@@ -75,7 +75,11 @@ exports.index = function (req, res) {
                     }
                     var result = JSON.parse(body);
 
-                    callback(null, result.data);
+                    if (result && result.isResult && result.statusCode == 200) {
+                        callback(null, result.data);
+                    } else {
+                        callback(result.message);
+                    }
                 });
             },
             function (callback) {
@@ -146,6 +150,7 @@ exports.documentPublicView = function (req, res) {
         if (!result.isResult || result.statusCode != 200 || !result.data) {
             return res.status(500).send('NOTHING TO SHOW, PLEASE USE CORRECT PUBLIC URL');
         }
+
         params.doc = result.data.doc;
         params.meta = result.data.meta;
 
