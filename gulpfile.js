@@ -7,7 +7,7 @@ gulp.task('pack', function () {
     gulp.src(['./theme/landing/**/*']).pipe(gulp.dest('./public/landing'));
 });
 
-gulp.task('deploy', ['pack'], function () {
+gulp.task('deploy', function () {
     gulp.src('./public/angular/index.html').pipe(gulp.dest("./views"));
     gulp.src('./public/landing/index.html').pipe(rename('landing.html')).pipe(gulp.dest("./views"));
 });
@@ -17,4 +17,4 @@ gulp.task('clean', function (next) {
     next();
 });
 
-gulp.task('default', ['deploy','clean']);
+gulp.task('default', ['pack', 'deploy']);
