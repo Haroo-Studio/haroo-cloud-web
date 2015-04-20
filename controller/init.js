@@ -3,6 +3,7 @@ var configure = require('../config');
 var path = require('path');
 var mongoose = require('mongoose');
 var express = require('express');
+var favicon = require('serve-favicon');
 var cookieParser = require('cookie-parser');
 var compress = require('compression');
 var session = require('express-session');
@@ -108,8 +109,9 @@ function init(mode, callback) {
     var account = require('../route/account');
     var dashboard = require('../route/dashboard');
 
-    server.use(express.static(path.join(__dirname, '../public/landing'), staticOptions));
+    server.use(favicon(__dirname + '/../public/favicon.ico'));
     server.use(express.static(path.join(__dirname, '../public'), staticOptions));
+    server.use(express.static(path.join(__dirname, '../public/landing'), staticOptions));
 
     server.use(home);
     server.use(stat);
