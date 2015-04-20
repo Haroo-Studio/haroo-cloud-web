@@ -46,7 +46,15 @@ $ npm run configure
 **install ui libraries**
 
 ```bash
+$ cd theme
+$ npm install
 $ bower install
+$ grunt build:angular
+$ grunt build:landing
+$ cd ..
+$ gulp pack
+$ gulp deploy
+$ gulp clean
 ```
 
 **start**
