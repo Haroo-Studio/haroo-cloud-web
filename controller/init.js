@@ -89,7 +89,12 @@ function init(mode, callback) {
     var DAY = HOUR * 24;
     var WEEK = DAY * 7;
 
-    server.use(express.static(path.join(__dirname, '../public'), { maxAge: WEEK }));
+    var staticOptions = {
+        dotfiles: 'allow',
+        extensions: ['html'],
+        etag: true,
+        maxAge: WEEK
+    };
 
     // Custom middleware
     server.use(commonMiddleware.userSession());
@@ -103,9 +108,15 @@ function init(mode, callback) {
     var account = require('../route/account');
     var dashboard = require('../route/dashboard');
 
+    server.use(express.static(path.join(__dirname, '../public/landing'), staticOptions));
+    server.use(express.static(path.join(__dirname, '../public'), staticOptions));
+
     server.use(home);
     server.use(stat);
     server.use(account);
+
+    server.use(express.static(path.join(__dirname, '../public/angular'), staticOptions));
+
     server.use(dashboard);
 
     // 500 Error Handler

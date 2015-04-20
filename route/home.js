@@ -15,7 +15,7 @@ router.get('/', function (req, res) {
      res.render('index', params);
      }
      */
-    res.render('index', params);
+    res.render('landing', params);
 });
 
 router.get('/download', useragent.express(), function (req, res) {

@@ -11,7 +11,7 @@
 - bind static directory to `/theme/angular`
 
 ```
-cd theme
+## {project root}/theme
 grunt build:angular
 ```
 
@@ -20,6 +20,7 @@ grunt build:angular
 - bind static directory to `/theme/landing`
 
 ```
+## {project root}/theme
 grunt build:landing
 ```
 
@@ -31,6 +32,7 @@ grunt build:landing
 - use gulp processor
 
 ```
+## {project root}
 gulp pack
 gulp deploy
 gulp clean
