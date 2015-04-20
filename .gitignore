@@ -25,7 +25,8 @@ build/Release
 node_modules
 
 # bower
-public/components
+components
+bower_components
 
 # for webstorm
 *.iml
